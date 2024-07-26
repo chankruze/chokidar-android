@@ -64,10 +64,7 @@ public class BatteryService extends Service {
         mediaPlayer = MediaPlayer.create(this, R.raw.tone1);
         mediaPlayer.setLooping(true);
         mediaPlayer.setVolume(100.0f, 100.0f);
-    }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
         // set up the notification
         createNotificationChannel();
         Notification notification = createNotification();
@@ -77,14 +74,17 @@ public class BatteryService extends Service {
         registerReceiver(batteryBroadcastReceiver, filter);
 
         // start foreground service
-        int SERVICE_ID = 1000001;
+        int SERVICE_ID = 2;
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             startForeground(SERVICE_ID, notification);
         } else {
             startForeground(SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
         }
+    }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_STICKY;
     }
 
