@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- permissions -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -15,7 +14,6 @@
         </intent>
     </queries>
 
-    <!-- application -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -27,13 +25,19 @@
         android:theme="@style/Theme.PhonePolice"
         tools:targetApi="31">
         <activity
+            android:name=".activities.PinLoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PinSetupActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.FullChargeActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.HomeActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +48,7 @@
 
         <!-- services -->
         <service
-            android:name="com.geekofia.phonepolice.services.BatteryService"
+            android:name=".services.BatteryService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
     </application>

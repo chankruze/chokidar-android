@@ -1,24 +1,35 @@
 package com.geekofia.phonepolice;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.geekofia.phonepolice.activities.PinLoginActivity;
+import com.geekofia.phonepolice.activities.PinSetupActivity;
+import com.geekofia.phonepolice.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        SecurePrefs securePrefs = new SecurePrefs();
+
+        if (securePrefs.isFirstLaunch(this)) {
+            // Redirect to PIN setup screen
+            Intent intent = new Intent(this, PinSetupActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            // Redirect to PIN login screen
+            Intent intent = new Intent(this, PinLoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

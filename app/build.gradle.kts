@@ -10,8 +10,8 @@ android {
         applicationId = "com.geekofia.phonepolice"
         minSdk = 24
         targetSdk = 34
-        versionCode = 103
-        versionName = "1.0.3"
+        versionCode = 104
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.preference)
+    implementation(libs.security.crypto)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
