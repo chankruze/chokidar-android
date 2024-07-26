@@ -19,6 +19,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
+import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 import com.geekofia.phonepolice.utils.Utils;
 import com.geekofia.phonepolice.databinding.ActivityFullChargeBinding;
@@ -71,18 +72,27 @@ public class FullChargeActivity extends AppCompatActivity implements SharedPrefe
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
         ActivityFullChargeSettingsFragment fragment = (ActivityFullChargeSettingsFragment) getSupportFragmentManager().findFragmentById(R.id.preference_container);
+
         if (fragment != null) {
-            if (PreferenceKeyManager.getPreferenceKeyItem("FULL_BATTERY_ALERT_SWITCH").getKey().equals(key)) {
-                boolean isEnabled = sharedPreferences.getBoolean(key, false);
-                String message = PreferenceKeyManager.getPreferenceKeyItem("FULL_BATTERY_ALERT_SWITCH").getFeatureName() + (isEnabled ? " Enabled" : " Disabled");
+            if (PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_SWITCH).getKey().equals(key)) {
+                boolean isAlertEnabled = sharedPreferences.getBoolean(key, false);
+                String message = PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_SWITCH).getFeatureName() + (isAlertEnabled ? " Enabled" : " Disabled");
                 Utils.showToast(this, message);
 
-                if (!isBatteryServiceRunning()) {
-                    // Start the battery service
-                    Intent intent = new Intent(this, BatteryService.class);
-                    ContextCompat.startForegroundService(this, intent);
+                if (isAlertEnabled && !isBatteryServiceRunning()) {
+                    // Start the battery service with start intent
+                    Intent startIntent = new Intent(this, BatteryService.class);
+                    // startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+                    ContextCompat.startForegroundService(this, startIntent);
+                } else if (!isAlertEnabled && isBatteryServiceRunning()) {
+                    // Stop foreground service with stop intent
+                    Intent stopIntent = new Intent(this, BatteryService.class);
+                    // stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
+                    // ContextCompat.startForegroundService(this, stopIntent);
+                    // https://developer.android.com/develop/background-work/services#Stopping
+                    this.stopService(stopIntent);
                 }
-            } else if (PreferenceKeyManager.getPreferenceKeyItem("FULL_BATTERY_ALERT_TONE_PICKER").getKey().equals(key)) {
+            } else if (PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey().equals(key)) {
                 // Play the newly selected tone
                 playSelectedTone(sharedPreferences.getString(key, "tone1"));
                 // Update the summary

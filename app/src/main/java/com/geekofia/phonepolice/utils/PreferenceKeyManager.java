@@ -11,8 +11,8 @@ public class PreferenceKeyManager {
 
     static {
         // Add your switch items here
-        preferenceKeyItemHashMap.put("FULL_BATTERY_ALERT_SWITCH", new PreferenceKeyItem("full_battery_alert_switch", "Full Battery Alert"));
-        preferenceKeyItemHashMap.put("FULL_BATTERY_ALERT_TONE_PICKER", new PreferenceKeyItem("full_battery_alert_tone_picker", "Full Battery Alert Tone"));
+        preferenceKeyItemHashMap.put(Constants.FULL_BATTERY_ALERT_SWITCH, new PreferenceKeyItem("full_battery_alert_switch", "Full Battery Alert"));
+        preferenceKeyItemHashMap.put(Constants.FULL_BATTERY_ALERT_TONE_PICKER, new PreferenceKeyItem("full_battery_alert_tone_picker", "Full Battery Alert Tone"));
         // Add more switch items as needed
     }
 

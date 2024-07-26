@@ -2,7 +2,9 @@ package com.geekofia.phonepolice.utils;
 
 public class Constants {
     // Keys for SharedPreferences
-    public static final String PREF_ENABLE_DISABLE_SWITCH = "enable_disable_switch";
+    public static final String FULL_BATTERY_ALERT_SWITCH = "FULL_BATTERY_ALERT_SWITCH";
+    public static final String FULL_BATTERY_ALERT_TONE_PICKER = "FULL_BATTERY_ALERT_TONE_PICKER";
+
 
     // Other constants
     public static final String API_BASE_URL = "https://api.example.com/";

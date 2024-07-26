@@ -23,6 +23,7 @@ import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.activities.HomeActivity;
+import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 import com.geekofia.phonepolice.utils.Utils;
 
@@ -30,29 +31,7 @@ import com.geekofia.phonepolice.utils.Utils;
 public class BatteryService extends Service {
     private static final String CHANNEL_ID = "BATTERY_BACKGROUND_SERVICE";
     private MediaPlayer mediaPlayer;
-    private final BroadcastReceiver batteryBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int level = intent.getIntExtra("level", -1);
-            int scale = intent.getIntExtra("scale", -1);
-            float batteryPct = level / (float) scale * 100;
-
-            Log.d("BatteryService", "Battery level: " + batteryPct);
-
-            if (batteryPct >= 100) {
-                if (mediaPlayer == null) {
-                    mediaPlayer = MediaPlayer.create(BatteryService.this, R.raw.tone1);
-                }
-                if (!mediaPlayer.isPlaying()) {
-                    mediaPlayer.start();
-                }
-            } else {
-                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                }
-            }
-        }
-    };
+    private BroadcastReceiver batteryBroadcastReceiver;
 
     @Nullable
     @Override
@@ -64,17 +43,9 @@ public class BatteryService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        // TODO: use selected ringtone
-        // setup media player
-        setupMediaPlayer();
-
         // set up the notification
         createNotificationChannel();
         Notification notification = createNotification();
-
-        // Register the BroadcastReceiver for battery changes
-        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        registerReceiver(batteryBroadcastReceiver, filter);
 
         // start foreground service
         int SERVICE_ID = 2;
@@ -83,6 +54,17 @@ public class BatteryService extends Service {
             startForeground(SERVICE_ID, notification);
         } else {
             startForeground(SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+        }
+
+        // Check if the full battery alert switch is enabled
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isFullBatteryAlertEnabled = prefs.getBoolean(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_SWITCH).getKey(), false);
+
+        if (isFullBatteryAlertEnabled) {
+            // setup media player
+            setupMediaPlayer();
+            // register battery broadcast receiver
+            registerBatteryReceiver();
         }
     }
 
@@ -122,7 +104,7 @@ public class BatteryService extends Service {
 
     private void setupMediaPlayer() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String selectedTone = prefs.getString(PreferenceKeyManager.getPreferenceKeyItem("FULL_BATTERY_ALERT_TONE_PICKER").getKey(), "tone1");
+        String selectedTone = prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
 
         try {
             mediaPlayer = MediaPlayer.create(this, Utils.getToneResource(selectedTone));
@@ -137,6 +119,36 @@ public class BatteryService extends Service {
         }
     }
 
+    private void registerBatteryReceiver() {
+        batteryBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int level = intent.getIntExtra("level", -1);
+                int scale = intent.getIntExtra("scale", -1);
+                float batteryPct = level / (float) scale * 100;
+
+                Log.d("BatteryService", "Battery level: " + batteryPct);
+
+                if (batteryPct >= 62) {
+                    if (mediaPlayer == null) {
+                        mediaPlayer = MediaPlayer.create(BatteryService.this, R.raw.tone1);
+                    }
+                    if (!mediaPlayer.isPlaying()) {
+                        mediaPlayer.start();
+                    }
+                } else {
+                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    }
+                }
+            }
+        };
+
+        // Register the BroadcastReceiver for battery changes
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(batteryBroadcastReceiver, filter);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -145,6 +157,9 @@ public class BatteryService extends Service {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        unregisterReceiver(batteryBroadcastReceiver);
+        if (batteryBroadcastReceiver != null) {
+            unregisterReceiver(batteryBroadcastReceiver);
+        }
+        stopForeground(true);
     }
 }
