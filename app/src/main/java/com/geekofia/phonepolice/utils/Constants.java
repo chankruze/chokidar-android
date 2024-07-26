@@ -1,4 +1,4 @@
-package com.geekofia.phonepolice;
+package com.geekofia.phonepolice.utils;
 
 public class Constants {
     // Keys for SharedPreferences

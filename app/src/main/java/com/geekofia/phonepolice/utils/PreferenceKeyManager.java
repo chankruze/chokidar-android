@@ -1,5 +1,7 @@
-package com.geekofia.phonepolice;
+package com.geekofia.phonepolice.utils;
 
+
+import com.geekofia.phonepolice.models.PreferenceKeyItem;
 
 import java.util.HashMap;
 import java.util.Map;

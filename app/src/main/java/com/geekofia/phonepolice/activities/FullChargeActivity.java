@@ -17,8 +17,8 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
-import com.geekofia.phonepolice.PreferenceKeyManager;
-import com.geekofia.phonepolice.Utils;
+import com.geekofia.phonepolice.utils.PreferenceKeyManager;
+import com.geekofia.phonepolice.utils.Utils;
 import com.geekofia.phonepolice.databinding.ActivityFullChargeBinding;
 import com.geekofia.phonepolice.services.BatteryService;
 

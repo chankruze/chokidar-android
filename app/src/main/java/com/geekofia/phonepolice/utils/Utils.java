@@ -1,4 +1,4 @@
-package com.geekofia.phonepolice;
+package com.geekofia.phonepolice.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package com.geekofia.phonepolice;
+package com.geekofia.phonepolice.models;
 
 public class PreferenceKeyItem {
     private final String key;
