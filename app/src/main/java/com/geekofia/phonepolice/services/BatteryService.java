@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
@@ -18,9 +19,12 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.activities.HomeActivity;
+import com.geekofia.phonepolice.utils.PreferenceKeyManager;
+import com.geekofia.phonepolice.utils.Utils;
 
 
 public class BatteryService extends Service {
@@ -60,10 +64,9 @@ public class BatteryService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        // init media player
-        mediaPlayer = MediaPlayer.create(this, R.raw.tone1);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.setVolume(100.0f, 100.0f);
+        // TODO: use selected ringtone
+        // setup media player
+        setupMediaPlayer();
 
         // set up the notification
         createNotificationChannel();
@@ -115,6 +118,23 @@ public class BatteryService extends Service {
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .build();
+    }
+
+    private void setupMediaPlayer() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String selectedTone = prefs.getString(PreferenceKeyManager.getPreferenceKeyItem("FULL_BATTERY_ALERT_TONE_PICKER").getKey(), "tone1");
+
+        try {
+            mediaPlayer = MediaPlayer.create(this, Utils.getToneResource(selectedTone));
+            mediaPlayer.setLooping(true);
+            mediaPlayer.setVolume(100.0f, 100.0f);
+            if (mediaPlayer == null) {
+                throw new IllegalStateException("Failed to create MediaPlayer with the selected tone");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle exception (e.g., show a notification or log)
+        }
     }
 
     @Override

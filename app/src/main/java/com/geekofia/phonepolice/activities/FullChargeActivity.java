@@ -1,5 +1,7 @@
 package com.geekofia.phonepolice.activities;
 
+import static com.geekofia.phonepolice.utils.Utils.getToneResource;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +26,6 @@ import com.geekofia.phonepolice.services.BatteryService;
 
 public class FullChargeActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private ActivityFullChargeBinding binding;
-    private static final String SWITCH_KEY = "full_battery_alert";
     private SharedPreferences sharedPreferences;
     private MediaPlayer mediaPlayer;
 
@@ -100,26 +101,6 @@ public class FullChargeActivity extends AppCompatActivity implements SharedPrefe
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
-        }
-    }
-
-
-    private int getToneResource(String tone) {
-        switch (tone) {
-            case "tone1":
-                return R.raw.tone1;
-            case "tone2":
-                return R.raw.tone2;
-            case "tone3":
-                return R.raw.tone3;
-            case "tone4":
-                return R.raw.tone4;
-            case "tone5":
-                return R.raw.tone5;
-            case "tone6":
-                return R.raw.tone6;
-            default:
-                return R.raw.tone1;
         }
     }
 
