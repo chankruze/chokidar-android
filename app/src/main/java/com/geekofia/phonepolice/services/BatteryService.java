@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class BatteryService extends Service {
     private static final String CHANNEL_ID = "BATTERY_BACKGROUND_SERVICE";
     private MediaPlayer mediaPlayer;
     private BroadcastReceiver batteryBroadcastReceiver;
+    private String currentAlertTone;
 
     @Nullable
     @Override
@@ -61,8 +63,6 @@ public class BatteryService extends Service {
         boolean isFullBatteryAlertEnabled = prefs.getBoolean(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_SWITCH).getKey(), false);
 
         if (isFullBatteryAlertEnabled) {
-            // setup media player
-            setupMediaPlayer();
             // register battery broadcast receiver
             registerBatteryReceiver();
         }
@@ -77,7 +77,7 @@ public class BatteryService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Battery Foreground Service Channel",
+                    "Battery Foreground Service",
                     NotificationManager.IMPORTANCE_HIGH
             );
 
@@ -94,8 +94,8 @@ public class BatteryService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Audio Playing")
-                .setContentText("Your audio is playing in the background.")
+                .setContentTitle("Full Battery Alert")
+                .setContentText("Your device is fully charged")
                 .setSmallIcon(R.drawable.ic_full_battery)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
@@ -103,11 +103,8 @@ public class BatteryService extends Service {
     }
 
     private void setupMediaPlayer() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String selectedTone = prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
-
         try {
-            mediaPlayer = MediaPlayer.create(this, Utils.getToneResource(selectedTone));
+            mediaPlayer = MediaPlayer.create(this, Utils.getToneResource(currentAlertTone));
             mediaPlayer.setLooping(true);
             mediaPlayer.setVolume(100.0f, 100.0f);
             if (mediaPlayer == null) {
@@ -119,19 +116,43 @@ public class BatteryService extends Service {
         }
     }
 
+    private String getSelectedTone() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
+    }
+
+    private void stopMediaPlayerAndNotification() {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        stopForeground(true);  // Remove the notification
+    }
+
     private void registerBatteryReceiver() {
         batteryBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+                boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                        status == BatteryManager.BATTERY_STATUS_FULL;
                 int level = intent.getIntExtra("level", -1);
                 int scale = intent.getIntExtra("scale", -1);
                 float batteryPct = level / (float) scale * 100;
 
-                Log.d("BatteryService", "Battery level: " + batteryPct);
+                Log.d(this.getClass().getName(), "Battery level: " + batteryPct);
 
-                if (batteryPct >= 62) {
-                    if (mediaPlayer == null) {
-                        mediaPlayer = MediaPlayer.create(BatteryService.this, R.raw.tone1);
+                if (batteryPct >= 100 && isCharging) {
+                    String selectedTone = getSelectedTone();
+                    if (!selectedTone.equals(currentAlertTone) || mediaPlayer == null) {
+                        // Release current media player if tone has changed
+                        if (mediaPlayer != null) {
+                            mediaPlayer.release();
+                        }
+                        currentAlertTone = selectedTone;
+                        setupMediaPlayer();
                     }
                     if (!mediaPlayer.isPlaying()) {
                         mediaPlayer.start();
@@ -152,14 +173,9 @@ public class BatteryService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
+        stopMediaPlayerAndNotification();
         if (batteryBroadcastReceiver != null) {
             unregisterReceiver(batteryBroadcastReceiver);
         }
-        stopForeground(true);
     }
 }
