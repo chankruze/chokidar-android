@@ -39,6 +39,7 @@ public class SafetyFeatureCardAdapter extends RecyclerView.Adapter<SafetyFeature
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
         SafetyFeatureCardItem safetyFeatureCardItem = safetyFeatureCardItemList.get(position);
         holder.cardTitle.setText(safetyFeatureCardItem.getTitle());
+        holder.cardDescription.setText(safetyFeatureCardItem.getDescription());
         holder.cardIcon.setImageResource(safetyFeatureCardItem.getImageResId());
 
         holder.cardView.setOnClickListener(v -> {

@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="@string/desc_full_charge_alert"
+        android:text="@string/desc_full_battery_alert"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
     <!-- Preference Fragment Container -->
