@@ -79,12 +79,12 @@ public class FullBatteryAlertActivity extends AppCompatActivity implements Share
                 String message = PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_SWITCH).getFeatureName() + (isAlertEnabled ? " Enabled" : " Disabled");
                 Utils.showToast(this, message);
 
-                if (isAlertEnabled && !isBatteryServiceRunning()) {
+                if (isAlertEnabled && !isFullBatteryAlertServiceRunning()) {
                     // Start the battery service with start intent
                     Intent startIntent = new Intent(this, FullBatteryAlertService.class);
                     // startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     ContextCompat.startForegroundService(this, startIntent);
-                } else if (!isAlertEnabled && isBatteryServiceRunning()) {
+                } else if (!isAlertEnabled && isFullBatteryAlertServiceRunning()) {
                     // Stop foreground service with stop intent
                     Intent stopIntent = new Intent(this, FullBatteryAlertService.class);
                     // stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
@@ -122,7 +122,7 @@ public class FullBatteryAlertActivity extends AppCompatActivity implements Share
         }
     }
 
-    public boolean isBatteryServiceRunning() {
+    public boolean isFullBatteryAlertServiceRunning() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
             if (FullBatteryAlertService.class.getName().equals(service.service.getClassName())) {
@@ -135,7 +135,7 @@ public class FullBatteryAlertActivity extends AppCompatActivity implements Share
     public static class ActivityFullChargeSettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.preferences_activity_full_charge, rootKey);
+            setPreferencesFromResource(R.xml.preferences_activity_full_battery_alert, rootKey);
         }
 
         public void updatePreferenceSummary(String key) {
