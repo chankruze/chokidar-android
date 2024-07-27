@@ -31,14 +31,13 @@ import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 import com.geekofia.phonepolice.utils.Utils;
 
 public class PocketAlarmActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    ActivityPocketAlarmBinding binding;
     private SharedPreferences sharedPreferences;
     private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityPocketAlarmBinding.inflate(getLayoutInflater());
+        ActivityPocketAlarmBinding binding = ActivityPocketAlarmBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Toolbar toolbar = binding.toolbarPocketAlarm;
@@ -54,7 +53,7 @@ public class PocketAlarmActivity extends AppCompatActivity implements SharedPref
         // Load the preference fragment
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.preference_container, new PocketAlarmActivity.ActivityPocketAlarmSettingsFragment())
+                .replace(R.id.preference_container, new PocketAlarmSettingsFragment())
                 .commit();
 
         // Get the default shared preferences
@@ -76,7 +75,7 @@ public class PocketAlarmActivity extends AppCompatActivity implements SharedPref
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        PocketAlarmActivity.ActivityPocketAlarmSettingsFragment fragment = (PocketAlarmActivity.ActivityPocketAlarmSettingsFragment) getSupportFragmentManager().findFragmentById(R.id.preference_container);
+        PocketAlarmSettingsFragment fragment = (PocketAlarmSettingsFragment) getSupportFragmentManager().findFragmentById(R.id.preference_container);
 
         if (fragment != null) {
             if (PreferenceKeyManager.getPreferenceKeyItem(Constants.POCKET_ALARM_SWITCH).getKey().equals(key)) {
@@ -134,7 +133,7 @@ public class PocketAlarmActivity extends AppCompatActivity implements SharedPref
         return false;
     }
 
-    public static class ActivityPocketAlarmSettingsFragment extends PreferenceFragmentCompat {
+    public static class PocketAlarmSettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences_activity_pocket_alarm, rootKey);

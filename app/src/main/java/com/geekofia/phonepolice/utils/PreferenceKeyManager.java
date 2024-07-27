@@ -17,7 +17,10 @@ public class PreferenceKeyManager {
         // PocketAlarm Preferences
         preferenceKeyItemHashMap.put(Constants.POCKET_ALARM_SWITCH, new PreferenceKeyItem("pocket_alarm_switch", "Pocket Alarm"));
         preferenceKeyItemHashMap.put(Constants.POCKET_ALARM_TONE_PICKER, new PreferenceKeyItem("pocket_alarm_tone_picker", "Pocket Alarm Tone"));
-        // Add more switch items as needed
+
+        // AntiTouchAlert Preferences
+        preferenceKeyItemHashMap.put(Constants.ANTI_TOUCH_ALERT_SWITCH, new PreferenceKeyItem("anti_touch_alert_switch", "Anti Touch Alert"));
+        preferenceKeyItemHashMap.put(Constants.ANTI_TOUCH_ALERT_TONE_PICKER, new PreferenceKeyItem("anti_touch_alert_tone_picker", "Anti Touch Alert Tone"));
     }
 
     public static PreferenceKeyItem getPreferenceKeyItem(String key) {
