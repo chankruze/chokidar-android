@@ -24,14 +24,14 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                style="@style/TextAppearance.Material3.TitleLarge"
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
                 android:text="Hey! Good Afternoon." />
 
-            <TextView
-                style="@style/TextAppearance.Material3.ActionBar.Subtitle"
+            <com.google.android.material.textview.MaterialTextView
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

@@ -122,5 +122,7 @@ public class PocketAlarmService extends Service implements SensorEventListener {
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);
         }
+        // Dismiss the service with notification
+        stopForeground(true);
     }
 }

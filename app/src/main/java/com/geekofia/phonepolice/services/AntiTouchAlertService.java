@@ -26,7 +26,6 @@ import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.activities.AntiTouchAlertActivity;
-import com.geekofia.phonepolice.activities.FullBatteryAlertActivity;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 
@@ -114,5 +113,7 @@ public class AntiTouchAlertService extends Service implements SensorEventListene
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);
         }
+        // Dismiss the service with notification
+        stopForeground(true);
     }
 }
