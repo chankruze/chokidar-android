@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- permissions -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- queries -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- queries -->
     <queries>
         <intent>
             <action android:name="android.intent.action.BATTERY_CHANGED" />
@@ -24,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PhonePolice"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.PocketAlarmActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.PinLoginActivity"
             android:exported="false" />

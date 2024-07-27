@@ -25,4 +25,5 @@
     <string name="text_set_pin">Set PIN</string>
     <string name="text_login">Login</string>
     <string name="desc_full_charge_alert">This alert notifies you when your battery level is full.</string>
+    <string name="desc_pocket_alarm">If someone tries to get rid of the phone from pocket or purse an alarm will explode alerting you.</string>
 </resources>
