@@ -13,6 +13,7 @@ import static com.geekofia.phonepolice.utils.Utils.showNotification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,6 +31,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
+import com.geekofia.phonepolice.activities.FullBatteryAlertActivity;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 
@@ -68,11 +70,16 @@ public class FullBatteryAlertService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // Create a pending intent to open when clicked on the notification
+        Intent notificationIntent = new Intent(this, FullBatteryAlertActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
         // Create the notification required for the service to start
         Notification notification = new NotificationCompat.Builder(this, BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("Full Battery Alert")
                 .setContentText("Full battery alert feature is now active")
                 .setSmallIcon(R.drawable.outline_battery_charging_full_24)
+                .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .build();
 
@@ -82,7 +89,7 @@ public class FullBatteryAlertService extends Service {
         } else {
             startForeground(BATTERY_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
         }
-        return Service.START_STICKY;
+        return START_STICKY;
     }
 
     private void registerBatteryReceiver() {

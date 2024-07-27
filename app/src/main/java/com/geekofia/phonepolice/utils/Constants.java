@@ -10,7 +10,7 @@ public class Constants {
 
     // Notification Ids
     public static final int FULL_BATTERY_NOTIFICATION_ID = 67671;
-    public static final String BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID = "BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID";
+    public static final String BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID = "BATTERY_SERVICE_NOTIFICATION_CHANNEL";
 
     // Prevent instantiation
     private Constants() {
