@@ -1,6 +1,6 @@
 package com.geekofia.phonepolice.activities;
 
-import static com.geekofia.phonepolice.utils.Utils.getToneResource;
+import static com.geekofia.phonepolice.utils.Utils.setupMediaPlayer;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -94,7 +94,13 @@ public class FullChargeActivity extends AppCompatActivity implements SharedPrefe
                 }
             } else if (PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey().equals(key)) {
                 // Play the newly selected tone
-                playSelectedTone(sharedPreferences.getString(key, "tone1"));
+                if (mediaPlayer == null) {
+                    mediaPlayer = setupMediaPlayer(this, sharedPreferences.getString(key, "tone1"));
+                } else {
+                    mediaPlayer.release();
+                    mediaPlayer = setupMediaPlayer(this, sharedPreferences.getString(key, "tone1"));
+                    mediaPlayer.start();
+                }
                 // Update the summary
                 fragment.updatePreferenceSummary(key);
             }
@@ -109,21 +115,11 @@ public class FullChargeActivity extends AppCompatActivity implements SharedPrefe
 
         // Release the MediaPlayer when the activity is destroyed
         if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
         }
-    }
-
-    private void playSelectedTone(String tone) {
-        int toneResource = getToneResource(tone);
-
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-        }
-
-        // Create a new MediaPlayer for the selected tone
-        mediaPlayer = MediaPlayer.create(this, toneResource);
-        mediaPlayer.start();
     }
 
     public boolean isBatteryServiceRunning() {

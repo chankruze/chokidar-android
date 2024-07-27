@@ -2,6 +2,8 @@ package com.geekofia.phonepolice.services;
 
 import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
 
+import static com.geekofia.phonepolice.utils.Utils.setupMediaPlayer;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,14 +28,13 @@ import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.activities.HomeActivity;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
-import com.geekofia.phonepolice.utils.Utils;
 
 
 public class BatteryService extends Service {
     private static final String CHANNEL_ID = "BATTERY_BACKGROUND_SERVICE";
     private MediaPlayer mediaPlayer;
-    private BroadcastReceiver batteryBroadcastReceiver;
     private String currentAlertTone;
+    private BroadcastReceiver batteryBroadcastReceiver;
 
     @Nullable
     @Override
@@ -102,33 +103,11 @@ public class BatteryService extends Service {
                 .build();
     }
 
-    private void setupMediaPlayer() {
-        try {
-            mediaPlayer = MediaPlayer.create(this, Utils.getToneResource(currentAlertTone));
-            mediaPlayer.setLooping(true);
-            mediaPlayer.setVolume(100.0f, 100.0f);
-            if (mediaPlayer == null) {
-                throw new IllegalStateException("Failed to create MediaPlayer with the selected tone");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Handle exception (e.g., show a notification or log)
-        }
-    }
-
-    private String getSelectedTone() {
+    private void initMediaPlayer() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
-    }
+        String selectedTone = prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
 
-    private void stopMediaPlayerAndNotification() {
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        stopForeground(true);  // Remove the notification
+        setupMediaPlayer(this, selectedTone);
     }
 
     private void registerBatteryReceiver() {
@@ -144,7 +123,7 @@ public class BatteryService extends Service {
 
                 Log.d(this.getClass().getName(), "Battery level: " + batteryPct);
 
-                if (batteryPct >= 100 && isCharging) {
+                if (isCharging && batteryPct >= 100) {
                     String selectedTone = getSelectedTone();
                     if (!selectedTone.equals(currentAlertTone) || mediaPlayer == null) {
                         // Release current media player if tone has changed
@@ -152,7 +131,7 @@ public class BatteryService extends Service {
                             mediaPlayer.release();
                         }
                         currentAlertTone = selectedTone;
-                        setupMediaPlayer();
+                        mediaPlayer = setupMediaPlayer(context, currentAlertTone);
                     }
                     if (!mediaPlayer.isPlaying()) {
                         mediaPlayer.start();
@@ -170,12 +149,22 @@ public class BatteryService extends Service {
         registerReceiver(batteryBroadcastReceiver, filter);
     }
 
+    private String getSelectedTone() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopMediaPlayerAndNotification();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
         if (batteryBroadcastReceiver != null) {
             unregisterReceiver(batteryBroadcastReceiver);
         }
+        stopForeground(true);
     }
 }

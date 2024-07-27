@@ -1,6 +1,7 @@
 package com.geekofia.phonepolice.utils;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.widget.Toast;
 
 import com.geekofia.phonepolice.R;
@@ -28,6 +29,18 @@ public class Utils {
                 return R.raw.tone6;
             default:
                 return R.raw.tone1;
+        }
+    }
+
+    public static MediaPlayer setupMediaPlayer(Context context, String tone) {
+        try {
+            MediaPlayer mediaPlayer = MediaPlayer.create(context, getToneResource(tone));
+            mediaPlayer.setLooping(true);
+            mediaPlayer.setVolume(100.0f, 100.0f);
+            return mediaPlayer;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Failed to create MediaPlayer with the selected tone");
         }
     }
 
