@@ -26,17 +26,16 @@ import com.geekofia.phonepolice.utils.Utils;
 import com.geekofia.phonepolice.services.FullBatteryAlertService;
 
 public class FullBatteryAlertActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private ActivityFullBatteryAlertBinding binding;
     private SharedPreferences sharedPreferences;
     private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityFullBatteryAlertBinding.inflate(getLayoutInflater());
+        ActivityFullBatteryAlertBinding binding = ActivityFullBatteryAlertBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Toolbar toolbar = binding.toolbarFullCharge;
+        Toolbar toolbar = binding.toolbarFullBatteryAlert;
         toolbar.setTitle("Full Battery Alert");
         setSupportActionBar(toolbar);
 
@@ -49,7 +48,7 @@ public class FullBatteryAlertActivity extends AppCompatActivity implements Share
         // Load the preference fragment
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.preference_container, new ActivityFullChargeSettingsFragment())
+                .replace(R.id.preference_container, new FullBatteryAlertSettingsFragment())
                 .commit();
 
         // Get the default shared preferences
@@ -71,7 +70,7 @@ public class FullBatteryAlertActivity extends AppCompatActivity implements Share
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        ActivityFullChargeSettingsFragment fragment = (ActivityFullChargeSettingsFragment) getSupportFragmentManager().findFragmentById(R.id.preference_container);
+        FullBatteryAlertSettingsFragment fragment = (FullBatteryAlertSettingsFragment) getSupportFragmentManager().findFragmentById(R.id.preference_container);
 
         if (fragment != null) {
             if (PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_SWITCH).getKey().equals(key)) {
@@ -82,14 +81,11 @@ public class FullBatteryAlertActivity extends AppCompatActivity implements Share
                 if (isAlertEnabled && !isFullBatteryAlertServiceRunning()) {
                     // Start the battery service with start intent
                     Intent startIntent = new Intent(this, FullBatteryAlertService.class);
-                    // startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     ContextCompat.startForegroundService(this, startIntent);
                 } else if (!isAlertEnabled && isFullBatteryAlertServiceRunning()) {
                     // Stop foreground service with stop intent
-                    Intent stopIntent = new Intent(this, FullBatteryAlertService.class);
-                    // stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
-                    // ContextCompat.startForegroundService(this, stopIntent);
                     // https://developer.android.com/develop/background-work/services#Stopping
+                    Intent stopIntent = new Intent(this, FullBatteryAlertService.class);
                     this.stopService(stopIntent);
                 }
             } else if (PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey().equals(key)) {
@@ -132,7 +128,7 @@ public class FullBatteryAlertActivity extends AppCompatActivity implements Share
         return false;
     }
 
-    public static class ActivityFullChargeSettingsFragment extends PreferenceFragmentCompat {
+    public static class FullBatteryAlertSettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences_activity_full_battery_alert, rootKey);

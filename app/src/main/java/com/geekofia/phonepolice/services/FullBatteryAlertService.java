@@ -2,9 +2,9 @@ package com.geekofia.phonepolice.services;
 
 import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
 
-import static com.geekofia.phonepolice.utils.Constants.BATTERY_SERVICE_ID;
-import static com.geekofia.phonepolice.utils.Constants.BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID;
-import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_NOTIFICATION_ID;
+import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_ALERT_NOTIFICATION_ID;
+import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_ALERT_SERVICE_ID;
+import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID;
 import static com.geekofia.phonepolice.utils.Utils.createNotificationChannel;
 import static com.geekofia.phonepolice.utils.Utils.dismissNotification;
 import static com.geekofia.phonepolice.utils.Utils.getSelectedTone;
@@ -53,7 +53,7 @@ public class FullBatteryAlertService extends Service {
         // set up the notification channel early
         createNotificationChannel(
                 this,
-                BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID,
+                FULL_BATTERY_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID,
                 "Full Battery Alert",
                 NotificationManager.IMPORTANCE_DEFAULT,
                 "Notifications for full battery alert");
@@ -75,7 +75,7 @@ public class FullBatteryAlertService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         // Create the notification required for the service to start
-        Notification notification = new NotificationCompat.Builder(this, BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(this, FULL_BATTERY_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("Full Battery Alert")
                 .setContentText("Full battery alert feature is now active")
                 .setSmallIcon(R.drawable.outline_battery_charging_full_24)
@@ -85,9 +85,9 @@ public class FullBatteryAlertService extends Service {
 
         // Start foreground service
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            startForeground(BATTERY_SERVICE_ID, notification);
+            startForeground(FULL_BATTERY_ALERT_SERVICE_ID, notification);
         } else {
-            startForeground(BATTERY_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            startForeground(FULL_BATTERY_ALERT_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
         }
         return START_STICKY;
     }
@@ -122,21 +122,21 @@ public class FullBatteryAlertService extends Service {
                     if (!mediaPlayer.isPlaying()) {
                         mediaPlayer.start();
                         // Create a new notification and swap it with existing one
-                        Notification notification = new NotificationCompat.Builder(context, BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID)
+                        Notification notification = new NotificationCompat.Builder(context, FULL_BATTERY_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID)
                                 .setContentTitle("Full Battery Alert")
                                 .setContentText("Your device is fully charged! Please remove the charger.")
                                 .setSmallIcon(R.drawable.outline_battery_charging_full_24)
                                 .setOngoing(true)
                                 .build();
                         // Show the notification
-                        showNotification(context, FULL_BATTERY_NOTIFICATION_ID, notification);
+                        showNotification(context, FULL_BATTERY_ALERT_NOTIFICATION_ID, notification);
                     }
                 } else {
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                         // Pause the media player
                         mediaPlayer.pause();
                         // Dismiss the notification
-                        dismissNotification(context, FULL_BATTERY_NOTIFICATION_ID);
+                        dismissNotification(context, FULL_BATTERY_ALERT_NOTIFICATION_ID);
                     }
                 }
             }

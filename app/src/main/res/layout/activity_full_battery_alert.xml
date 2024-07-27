@@ -9,7 +9,7 @@
     tools:context=".activities.FullBatteryAlertActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_full_charge"
+        android:id="@+id/toolbar_full_battery_alert"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:menu="@menu/toolbar_menu" />
