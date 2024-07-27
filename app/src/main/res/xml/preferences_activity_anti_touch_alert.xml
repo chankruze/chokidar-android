@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreferenceCompat
+        android:icon="@drawable/ic_pocket_alarm"
+        android:defaultValue="false"
+        android:key="anti_touch_alert_switch"
+        android:summary="Toggle this switch to enable or disable anti touch alert"
+        android:title="Enable Anti Touch Alert" />
+
+    <ListPreference
+        android:icon="@drawable/outline_music_note_24"
+        android:key="anti_touch_alert_tone_picker"
+        android:title="Anti Touch Alert Tone"
+        android:entries="@array/alarm_tone_names"
+        android:entryValues="@array/alarm_tone_values"
+        android:defaultValue="tone1"
+        android:dialogTitle="Select Alarm Tone"
+        android:summary="%s"/>
+</PreferenceScreen>
