@@ -34,7 +34,7 @@ import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 
 
-public class BatteryService extends Service {
+public class FullBatteryAlertService extends Service {
     private MediaPlayer mediaPlayer;
     private String currentAlertTone;
     private BroadcastReceiver batteryBroadcastReceiver;
@@ -72,7 +72,7 @@ public class BatteryService extends Service {
         Notification notification = new NotificationCompat.Builder(this, BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("Full Battery Alert")
                 .setContentText("Full battery alert feature is now active")
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.outline_battery_charging_full_24)
                 .setOngoing(true)
                 .build();
 
@@ -118,7 +118,7 @@ public class BatteryService extends Service {
                         Notification notification = new NotificationCompat.Builder(context, BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID)
                                 .setContentTitle("Full Battery Alert")
                                 .setContentText("Your device is fully charged! Please remove the charger.")
-                                .setSmallIcon(R.drawable.ic_full_battery)
+                                .setSmallIcon(R.drawable.outline_battery_charging_full_24)
                                 .setOngoing(true)
                                 .build();
                         // Show the notification

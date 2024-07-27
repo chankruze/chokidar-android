@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.FullChargeActivity">
+    tools:context=".activities.FullBatteryAlertActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_full_charge"
@@ -21,6 +21,13 @@
         android:contentDescription="@string/desc_brand_banner"
         android:scaleType="centerCrop"
         android:src="@drawable/banner" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/desc_full_charge_alert"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
     <!-- Preference Fragment Container -->
     <FrameLayout

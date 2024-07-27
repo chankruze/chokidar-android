@@ -19,25 +19,25 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
+import com.geekofia.phonepolice.databinding.ActivityFullBatteryAlertBinding;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 import com.geekofia.phonepolice.utils.Utils;
-import com.geekofia.phonepolice.databinding.ActivityFullChargeBinding;
-import com.geekofia.phonepolice.services.BatteryService;
+import com.geekofia.phonepolice.services.FullBatteryAlertService;
 
-public class FullChargeActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private ActivityFullChargeBinding binding;
+public class FullBatteryAlertActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private ActivityFullBatteryAlertBinding binding;
     private SharedPreferences sharedPreferences;
     private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityFullChargeBinding.inflate(getLayoutInflater());
+        binding = ActivityFullBatteryAlertBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Toolbar toolbar = binding.toolbarFullCharge;
-        toolbar.setTitle("Battery Full Alert");
+        toolbar.setTitle("Full Battery Alert");
         setSupportActionBar(toolbar);
 
         // Enable the Up button
@@ -81,12 +81,12 @@ public class FullChargeActivity extends AppCompatActivity implements SharedPrefe
 
                 if (isAlertEnabled && !isBatteryServiceRunning()) {
                     // Start the battery service with start intent
-                    Intent startIntent = new Intent(this, BatteryService.class);
+                    Intent startIntent = new Intent(this, FullBatteryAlertService.class);
                     // startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     ContextCompat.startForegroundService(this, startIntent);
                 } else if (!isAlertEnabled && isBatteryServiceRunning()) {
                     // Stop foreground service with stop intent
-                    Intent stopIntent = new Intent(this, BatteryService.class);
+                    Intent stopIntent = new Intent(this, FullBatteryAlertService.class);
                     // stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
                     // ContextCompat.startForegroundService(this, stopIntent);
                     // https://developer.android.com/develop/background-work/services#Stopping
@@ -125,7 +125,7 @@ public class FullChargeActivity extends AppCompatActivity implements SharedPrefe
     public boolean isBatteryServiceRunning() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-            if (BatteryService.class.getName().equals(service.service.getClassName())) {
+            if (FullBatteryAlertService.class.getName().equals(service.service.getClassName())) {
                 return true;
             }
         }

@@ -1,5 +1,4 @@
-<!-- res/values/themes.xml -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme for light mode. -->
     <style name="Base.Theme.PhonePolice" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
@@ -14,11 +13,23 @@
         <item name="android:navigationBarColor">@color/md_black_1000</item>
 
         <item name="materialCardViewStyle">@style/Theme.PhonePolice.CardView</item>
+        <item name="preferenceTheme">@style/ThemeOverlay.App.Preference</item>
     </style>
 
     <style name="Theme.PhonePolice" parent="Base.Theme.PhonePolice" />
 
+    <!-- Custom CardView style -->
     <style name="Theme.PhonePolice.CardView" parent="Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">@color/md_grey_900</item>
+    </style>
+
+    <!-- Material Preference -->
+    <style name="ThemeOverlay.App.Preference" parent="PreferenceThemeOverlay">
+        <item name="switchPreferenceCompatStyle">@style/PreferenceMaterialSwitch</item>
+    </style>
+
+    <!-- Material Switch Preference -->
+    <style name="PreferenceMaterialSwitch" parent="@style/Preference.SwitchPreferenceCompat.Material">
+        <item name="widgetLayout">@layout/preference_switch</item>
     </style>
 </resources>

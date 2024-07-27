@@ -2,7 +2,7 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="35.92dp"
     android:height="56dp"
-    android:tint="@color/md_theme_dark_primary"
+    android:tint="@color/md_theme_dark_onPrimaryContainer"
     android:viewportWidth="35.92"
     android:viewportHeight="56">
     <path

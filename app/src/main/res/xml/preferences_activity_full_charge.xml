@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <SwitchPreferenceCompat
+        android:icon="@drawable/outline_battery_charging_full_24"
         android:defaultValue="false"
         android:key="full_battery_alert_switch"
         android:summary="Toggle this switch to enable or disable the full battery alert"
         android:title="Enable Full Battery Alert" />
 
     <ListPreference
+        android:icon="@drawable/outline_music_note_24"
         android:key="full_battery_alert_tone_picker"
         android:title="Full Battery Alert Tone"
         android:entries="@array/alarm_tone_names"

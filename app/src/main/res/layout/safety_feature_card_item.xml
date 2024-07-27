@@ -23,8 +23,9 @@
                 android:layout_height="32dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
+                android:background="@drawable/rounded_bg"
                 android:contentDescription="@string/card_icon_description"
-                android:src="@drawable/ic_intruder" />
+                tools:src="@drawable/ic_intruder" />
 
             <ImageView
                 android:id="@+id/card_chevron_right"
@@ -33,7 +34,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/card_chevron_right"
-                android:src="@drawable/ic_baseline_keyboard_arrow_right_24" />
+                android:src="@drawable/outline_keyboard_arrow_right_24" />
 
         </RelativeLayout>
 
@@ -56,16 +57,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/card_title"
                 android:text="Card description goes here." />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/card_switch"
-                style="@style/Widget.Material3.CompoundButton.MaterialSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/card_description"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                app:showText="false" />
         </RelativeLayout>
 
     </LinearLayout>

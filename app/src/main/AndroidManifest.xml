@@ -31,7 +31,7 @@
             android:name=".activities.PinSetupActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.FullChargeActivity"
+            android:name=".activities.FullBatteryAlertActivity"
             android:exported="false" />
         <activity
             android:name=".activities.HomeActivity"
@@ -48,7 +48,7 @@
 
         <!-- services -->
         <service
-            android:name=".services.BatteryService"
+            android:name=".services.FullBatteryAlertService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback"
             android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
