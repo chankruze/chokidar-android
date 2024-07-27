@@ -21,6 +21,10 @@ public class PreferenceKeyManager {
         // AntiTouchAlert Preferences
         preferenceKeyItemHashMap.put(Constants.ANTI_TOUCH_ALERT_SWITCH, new PreferenceKeyItem("anti_touch_alert_switch", "Anti Touch Alert"));
         preferenceKeyItemHashMap.put(Constants.ANTI_TOUCH_ALERT_TONE_PICKER, new PreferenceKeyItem("anti_touch_alert_tone_picker", "Anti Touch Alert Tone"));
+
+        // AntiTouchAlert Preferences
+        preferenceKeyItemHashMap.put(Constants.CHARGER_REMOVAL_ALERT_SWITCH, new PreferenceKeyItem("charger_removal_alert_switch", "Charger Removal Alert"));
+        preferenceKeyItemHashMap.put(Constants.CHARGER_REMOVAL_ALERT_TONE_PICKER, new PreferenceKeyItem("charger_removal_alert_tone_picker", "Charger Removal Alert Tone"));
     }
 
     public static PreferenceKeyItem getPreferenceKeyItem(String key) {

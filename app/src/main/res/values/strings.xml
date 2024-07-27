@@ -27,4 +27,5 @@
     <string name="desc_full_battery_alert">This alert notifies you when your battery level is full.</string>
     <string name="desc_pocket_alarm">If someone tries to get rid of the phone from pocket or purse an alarm will explode alerting you.</string>
     <string name="desc_anti_touch_alert">A loud ring will alert if someone touches or moves your device.</string>
+    <string name="desc_charger_removal_alert">Notifies when charging cable is unplugged.</string>
 </resources>
