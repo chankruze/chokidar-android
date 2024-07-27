@@ -2,12 +2,17 @@ package com.geekofia.phonepolice.services;
 
 import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
 
+import static com.geekofia.phonepolice.utils.Constants.BATTERY_SERVICE_ID;
+import static com.geekofia.phonepolice.utils.Constants.BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID;
+import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_NOTIFICATION_ID;
+import static com.geekofia.phonepolice.utils.Utils.createNotificationChannel;
+import static com.geekofia.phonepolice.utils.Utils.dismissNotification;
+import static com.geekofia.phonepolice.utils.Utils.getSelectedTone;
 import static com.geekofia.phonepolice.utils.Utils.setupMediaPlayer;
+import static com.geekofia.phonepolice.utils.Utils.showNotification;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,13 +30,11 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
-import com.geekofia.phonepolice.activities.HomeActivity;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 
 
 public class BatteryService extends Service {
-    private static final String CHANNEL_ID = "BATTERY_BACKGROUND_SERVICE";
     private MediaPlayer mediaPlayer;
     private String currentAlertTone;
     private BroadcastReceiver batteryBroadcastReceiver;
@@ -45,19 +48,13 @@ public class BatteryService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // set up the notification
-        createNotificationChannel();
-        Notification notification = createNotification();
-
-        // start foreground service
-        int SERVICE_ID = 2;
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            startForeground(SERVICE_ID, notification);
-        } else {
-            startForeground(SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
-        }
+        // set up the notification channel early
+        createNotificationChannel(
+                this,
+                BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID,
+                "Full Battery Alert",
+                NotificationManager.IMPORTANCE_DEFAULT,
+                "Notifications for full battery alert");
 
         // Check if the full battery alert switch is enabled
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -71,43 +68,21 @@ public class BatteryService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return Service.START_STICKY;
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Battery Foreground Service",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-
-            if (manager.getNotificationChannel(CHANNEL_ID) == null) {
-                manager.createNotificationChannel(serviceChannel);
-            }
-        }
-    }
-
-    private Notification createNotification() {
-        Intent notificationIntent = new Intent(this, HomeActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-
-        return new NotificationCompat.Builder(this, CHANNEL_ID)
+        // Create the notification required for the service to start
+        Notification notification = new NotificationCompat.Builder(this, BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("Full Battery Alert")
-                .setContentText("Your device is fully charged")
-                .setSmallIcon(R.drawable.ic_full_battery)
-                .setContentIntent(pendingIntent)
+                .setContentText("Full battery alert feature is now active")
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)
                 .setOngoing(true)
                 .build();
-    }
 
-    private void initMediaPlayer() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String selectedTone = prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
-
-        setupMediaPlayer(this, selectedTone);
+        // Start foreground service
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            startForeground(BATTERY_SERVICE_ID, notification);
+        } else {
+            startForeground(BATTERY_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+        }
+        return Service.START_STICKY;
     }
 
     private void registerBatteryReceiver() {
@@ -124,7 +99,10 @@ public class BatteryService extends Service {
                 Log.d(this.getClass().getName(), "Battery level: " + batteryPct);
 
                 if (isCharging && batteryPct >= 100) {
-                    String selectedTone = getSelectedTone();
+                    // Get selected tone
+                    String selectedTone = getSelectedTone(context, PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey());
+
+                    // Check if currently selected tone is changed
                     if (!selectedTone.equals(currentAlertTone) || mediaPlayer == null) {
                         // Release current media player if tone has changed
                         if (mediaPlayer != null) {
@@ -133,12 +111,25 @@ public class BatteryService extends Service {
                         currentAlertTone = selectedTone;
                         mediaPlayer = setupMediaPlayer(context, currentAlertTone);
                     }
+                    // If media player is already playing, start playing
                     if (!mediaPlayer.isPlaying()) {
                         mediaPlayer.start();
+                        // Create a new notification and swap it with existing one
+                        Notification notification = new NotificationCompat.Builder(context, BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID)
+                                .setContentTitle("Full Battery Alert")
+                                .setContentText("Your device is fully charged! Please remove the charger.")
+                                .setSmallIcon(R.drawable.ic_full_battery)
+                                .setOngoing(true)
+                                .build();
+                        // Show the notification
+                        showNotification(context, FULL_BATTERY_NOTIFICATION_ID, notification);
                     }
                 } else {
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                        // Pause the media player
                         mediaPlayer.pause();
+                        // Dismiss the notification
+                        dismissNotification(context, FULL_BATTERY_NOTIFICATION_ID);
                     }
                 }
             }
@@ -149,22 +140,20 @@ public class BatteryService extends Service {
         registerReceiver(batteryBroadcastReceiver, filter);
     }
 
-    private String getSelectedTone() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getString(PreferenceKeyManager.getPreferenceKeyItem(Constants.FULL_BATTERY_ALERT_TONE_PICKER).getKey(), "tone1");
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mediaPlayer != null) {
+        // Cleanup the media player
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        // Unregister the battery broadcast receiver if exists
         if (batteryBroadcastReceiver != null) {
             unregisterReceiver(batteryBroadcastReceiver);
         }
+        // Dismiss the service with notification
         stopForeground(true);
     }
 }

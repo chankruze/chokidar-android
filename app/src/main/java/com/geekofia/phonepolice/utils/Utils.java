@@ -1,8 +1,15 @@
 package com.geekofia.phonepolice.utils;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
 
@@ -32,6 +39,11 @@ public class Utils {
         }
     }
 
+    public static String getSelectedTone(Context context, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(key, "tone1");
+    }
+
     public static MediaPlayer setupMediaPlayer(Context context, String tone) {
         try {
             MediaPlayer mediaPlayer = MediaPlayer.create(context, getToneResource(tone));
@@ -42,6 +54,36 @@ public class Utils {
             e.printStackTrace();
             throw new IllegalStateException("Failed to create MediaPlayer with the selected tone");
         }
+    }
+
+    public static void createNotificationChannel(Context context, String channelId, String channelName, int importance, String channelDescription) {
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    channelName,
+                    importance
+            );
+            channel.setDescription(channelDescription);
+
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public static void showNotification(Context context, int notificationId, Notification notification) {
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(notificationId, notification);
+    }
+
+    public static void dismissNotification(Context context, int notificationId) {
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.cancel(notificationId);
     }
 
     // Prevent instantiation

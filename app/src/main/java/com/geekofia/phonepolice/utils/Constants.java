@@ -5,10 +5,12 @@ public class Constants {
     public static final String FULL_BATTERY_ALERT_SWITCH = "FULL_BATTERY_ALERT_SWITCH";
     public static final String FULL_BATTERY_ALERT_TONE_PICKER = "FULL_BATTERY_ALERT_TONE_PICKER";
 
+    // Service Ids
+    public static final int BATTERY_SERVICE_ID = 6767;
 
-    // Other constants
-    public static final String API_BASE_URL = "https://api.example.com/";
-    public static final int REQUEST_TIMEOUT = 5000;
+    // Notification Ids
+    public static final int FULL_BATTERY_NOTIFICATION_ID = 67671;
+    public static final String BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID = "BATTERY_SERVICE_NOTIFICATION_CHANNEL_ID";
 
     // Prevent instantiation
     private Constants() {

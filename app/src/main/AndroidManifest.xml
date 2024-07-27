@@ -50,7 +50,8 @@
         <service
             android:name=".services.BatteryService"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
+            android:foregroundServiceType="mediaPlayback"
+            android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     </application>
 
 </manifest>
