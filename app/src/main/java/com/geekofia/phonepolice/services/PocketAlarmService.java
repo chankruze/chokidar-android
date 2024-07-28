@@ -1,9 +1,6 @@
 package com.geekofia.phonepolice.services;
 
 import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
-import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_NOTIFICATION_ID;
-import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID;
-import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_ALERT_NOTIFICATION_ID;
 import static com.geekofia.phonepolice.utils.Constants.POCKET_ALARM_NOTIFICATION_ID;
 import static com.geekofia.phonepolice.utils.Constants.POCKET_ALARM_SERVICE_ID;
 import static com.geekofia.phonepolice.utils.Constants.POCKET_ALARM_SERVICE_NOTIFICATION_CHANNEL_ID;
@@ -34,13 +31,12 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
-import com.geekofia.phonepolice.activities.AntiTouchAlertActivity;
 import com.geekofia.phonepolice.activities.PocketAlarmActivity;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 
 public class PocketAlarmService extends Service implements SensorEventListener {
-    private Sensor accelerometer;
+    private Sensor proximitySensor;
     private SensorManager sensorManager;
     private MediaPlayer mediaPlayer;
     private String currentAlertTone;
@@ -72,8 +68,14 @@ public class PocketAlarmService extends Service implements SensorEventListener {
 
         if (isPocketAlarmEnabled) {
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-            accelerometer = sensorManager.getDefaultSensor(8);
-            sensorManager.registerListener(this, accelerometer, 3);
+            proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+            if (proximitySensor != null) {
+                sensorManager.registerListener(this, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+            } else {
+                Log.e(POCKET_ALARM_SERVICE_TAG, "Proximity sensor not available.");
+                stopSelf();
+            }
 
             // Create a pending intent to open when clicked on the notification
             Intent notificationIntent = new Intent(this, PocketAlarmActivity.class);
@@ -119,45 +121,55 @@ public class PocketAlarmService extends Service implements SensorEventListener {
     }
 
     @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.values[0] < this.accelerometer.getMaximumRange()) {
-            // TODO: pocket status: false
-            // TODO: stop media player
-            // TODO: implement flash light disable
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                // Pause the media player
-                mediaPlayer.pause();
-                // Dismiss the notification
-                dismissNotification(this, POCKET_ALARM_NOTIFICATION_ID);
-            }
-        } else {
-            // TODO: pocket status: true
-            // TODO: implement flash light enable
-            // TODO: implement vibration
-            // Get selected tone
-            String selectedTone = getSelectedTone(this, PreferenceKeyManager.getPreferenceKeyItem(Constants.POCKET_ALARM_TONE_PICKER).getKey());
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+            float distance = event.values[0];
+            System.out.println("Distance: " + distance + " getMaximumRange: " + proximitySensor.getMaximumRange());
 
-            // Check if currently selected tone is changed
-            if (!selectedTone.equals(currentAlertTone) || mediaPlayer == null) {
-                // Release current media player if tone has changed
-                if (mediaPlayer != null) {
-                    mediaPlayer.release();
+            if (distance < proximitySensor.getMaximumRange()) {
+                // The sensor is covered (e.g., phone in pocket)
+                Log.i(POCKET_ALARM_SERVICE_TAG, "Phone is in pocket.");
+
+                // TODO: implement flash light disable
+
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    // Pause the media player
+                    mediaPlayer.pause();
+                    // Dismiss the notification
+                    dismissNotification(this, POCKET_ALARM_NOTIFICATION_ID);
                 }
-                currentAlertTone = selectedTone;
-                mediaPlayer = setupMediaPlayer(this, currentAlertTone);
-            }
-            // If media player is already playing, start playing
-            if (!mediaPlayer.isPlaying()) {
-                mediaPlayer.start();
-                // Create a new notification and swap it with existing one
-                Notification notification = new NotificationCompat.Builder(this, POCKET_ALARM_SERVICE_NOTIFICATION_CHANNEL_ID)
-                        .setContentTitle("Pocket Alarm")
-                        .setContentText("Your device is not in the pocket.")
-                        .setSmallIcon(R.drawable.ic_pocket_alarm)
-                        .setOngoing(true)
-                        .build();
-                // Show the notification
-                showNotification(this, POCKET_ALARM_NOTIFICATION_ID, notification);
+            } else {
+                // The sensor is uncovered (e.g., phone is not in pocket)
+                Log.i(POCKET_ALARM_SERVICE_TAG, "Phone is not in pocket.");
+
+                // TODO: implement flash light enable
+                // TODO: implement vibration
+
+                // Get the selected tone
+                String selectedTone = getSelectedTone(this, PreferenceKeyManager.getPreferenceKeyItem(Constants.POCKET_ALARM_TONE_PICKER).getKey());
+
+                // Check if currently selected tone is changed
+                if (!selectedTone.equals(currentAlertTone) || mediaPlayer == null) {
+                    // Release current media player if tone has changed
+                    if (mediaPlayer != null) {
+                        mediaPlayer.release();
+                    }
+                    currentAlertTone = selectedTone;
+                    mediaPlayer = setupMediaPlayer(this, currentAlertTone);
+                }
+                // If media player is already playing, start playing
+                if (!mediaPlayer.isPlaying()) {
+                    mediaPlayer.start();
+                    // Create a new notification and swap it with existing one
+                    Notification notification = new NotificationCompat.Builder(this, POCKET_ALARM_SERVICE_NOTIFICATION_CHANNEL_ID)
+                            .setContentTitle("Pocket Alarm")
+                            .setContentText("Your device is not in the pocket.")
+                            .setSmallIcon(R.drawable.ic_pocket_alarm)
+                            .setOngoing(true)
+                            .build();
+                    // Show the notification
+                    showNotification(this, POCKET_ALARM_NOTIFICATION_ID, notification);
+                }
             }
         }
     }
