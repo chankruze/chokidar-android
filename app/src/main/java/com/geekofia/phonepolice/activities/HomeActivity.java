@@ -158,6 +158,27 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.action_settings) {
+            // TODO: open settings
+            return true;
+        } else if (itemId == R.id.action_cloud_sync) {
+            // TODO: sync to cloud
+            return true;
+        } else if (itemId == R.id.action_logout) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {

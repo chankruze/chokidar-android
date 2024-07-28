@@ -12,7 +12,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="account_title">Account</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_cloud_sync">Notifications</string>
     <string name="logout_title">Logout</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
