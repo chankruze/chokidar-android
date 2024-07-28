@@ -144,7 +144,7 @@ public class AntiTouchAlertService extends Service implements SensorEventListene
                         mediaPlayer.release();
                     }
                     currentAlertTone = selectedTone;
-                    mediaPlayer = setupMediaPlayer(this, currentAlertTone, false);
+                    mediaPlayer = setupMediaPlayer(this, currentAlertTone);
                 }
                 // If media player is already playing, start playing
                 if (!mediaPlayer.isPlaying()) {

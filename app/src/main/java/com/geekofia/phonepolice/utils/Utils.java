@@ -51,7 +51,7 @@ public class Utils {
     public static MediaPlayer setupMediaPlayer(Context context, String tone) {
         try {
             MediaPlayer mediaPlayer = MediaPlayer.create(context, getToneResource(tone));
-            mediaPlayer.setLooping(true);
+            mediaPlayer.setLooping(false);
             mediaPlayer.setVolume(100.0f, 100.0f);
             return mediaPlayer;
         } catch (Exception e) {

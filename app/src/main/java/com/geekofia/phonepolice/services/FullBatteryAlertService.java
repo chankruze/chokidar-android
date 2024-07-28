@@ -116,7 +116,7 @@ public class FullBatteryAlertService extends Service {
                             mediaPlayer.release();
                         }
                         currentAlertTone = selectedTone;
-                        mediaPlayer = setupMediaPlayer(context, currentAlertTone);
+                        mediaPlayer = setupMediaPlayer(context, currentAlertTone, true);
                     }
                     // If media player is already playing, start playing
                     if (!mediaPlayer.isPlaying()) {

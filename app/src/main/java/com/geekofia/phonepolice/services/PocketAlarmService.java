@@ -155,7 +155,7 @@ public class PocketAlarmService extends Service implements SensorEventListener {
                         mediaPlayer.release();
                     }
                     currentAlertTone = selectedTone;
-                    mediaPlayer = setupMediaPlayer(this, currentAlertTone);
+                    mediaPlayer = setupMediaPlayer(this, currentAlertTone, true);
                 }
                 // If media player is already playing, start playing
                 if (!mediaPlayer.isPlaying()) {
