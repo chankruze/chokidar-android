@@ -25,10 +25,11 @@
             android:padding="16dp">
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/greeting_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
-                android:text="Hey! Good Afternoon." />
+                tools:text="Hey! Good Afternoon." />
 
             <com.google.android.material.textview.MaterialTextView
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"

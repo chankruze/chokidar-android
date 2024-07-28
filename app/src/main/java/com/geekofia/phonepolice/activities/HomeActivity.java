@@ -1,5 +1,6 @@
 package com.geekofia.phonepolice.activities;
 
+import static com.geekofia.phonepolice.utils.Utils.getGreetingMessage;
 import static com.geekofia.phonepolice.utils.Utils.rateApp;
 import static com.geekofia.phonepolice.utils.Utils.shareApp;
 import static com.geekofia.phonepolice.utils.Utils.showPrivacyPolicy;
@@ -48,10 +49,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Update toolbar
         Toolbar toolbar = binding.toolbarHome;
         toolbar.setTitle("Home");
         setSupportActionBar(toolbar);
 
+        // Setup actionbar drawer toggle
         drawerLayout = binding.drawerLayout;
         NavigationView navigationView = binding.navigationView;
         navigationView.setNavigationItemSelectedListener(this);
@@ -60,6 +63,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        // Update greeting message
+        binding.greetingTextView.setText(String.format("Hey, %s", getGreetingMessage()));
+
+        // Render safety feature cards
         binding.recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columns
 
         List<SafetyFeatureCardItem> safetyFeatureCardItemList = new ArrayList<>();
@@ -78,6 +85,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Request notification permission
         requestNotificationPermission();
 
+        // Handle back button press
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -134,12 +142,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if (itemId == R.id.nav_account) {
             showToast(this, "Not implemented yet");
         } else if (itemId == R.id.nav_logout) {
-            finish();
+            drawerLayout.closeDrawer(GravityCompat.START);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
 
-        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

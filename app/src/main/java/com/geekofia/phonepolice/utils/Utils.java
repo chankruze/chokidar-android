@@ -9,14 +9,13 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
 
-import java.util.Objects;
+import java.util.Calendar;
 
 public class Utils {
 
@@ -133,6 +132,23 @@ public class Utils {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // Start activity with show intent
         context.startActivity(intent);
+    }
+
+    public static String getGreetingMessage() {
+        // Get the current hour
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        // Determine the greeting based on the hour
+        if (hour >= 5 && hour < 12) {
+            return "Good Morning!";
+        } else if (hour >= 12 && hour < 17) {
+            return "Good Afternoon!";
+        } else if (hour >= 17 && hour < 21) {
+            return "Good Evening!";
+        } else {
+            return "Good Night!";
+        }
     }
 
     // Prevent instantiation
