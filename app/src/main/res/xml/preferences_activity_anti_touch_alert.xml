@@ -23,8 +23,8 @@
         android:icon="@drawable/outline_touch_app_24"
         android:key="anti_touch_alert_sensitivity"
         android:max="10"
-        android:summary="Slide the seekbar to set sensitivity"
-        android:title="Touch Sensitivity"
+        android:summary="Slide the seekbar to adjust acceleration sensitivity threshold"
+        android:title="Sensitivity Threshold"
         app:showSeekBarValue="true" />
 
 </PreferenceScreen>

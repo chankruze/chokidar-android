@@ -5,6 +5,7 @@ import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_NOTIFICA
 import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_SERVICE_ID;
 import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID;
 import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_SERVICE_TAG;
+import static com.geekofia.phonepolice.utils.Utils.calculateDeltaAcceleration;
 import static com.geekofia.phonepolice.utils.Utils.createNotificationChannel;
 import static com.geekofia.phonepolice.utils.Utils.getSelectedTone;
 import static com.geekofia.phonepolice.utils.Utils.setupMediaPlayer;
@@ -35,9 +36,6 @@ import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 
 public class AntiTouchAlertService extends Service implements SensorEventListener {
-    private float acceleration;
-    private float accelerationCurrent;
-    private float accelerationLast;
     private SensorManager sensorManager;
     private MediaPlayer mediaPlayer;
     private String currentAlertTone;
@@ -70,30 +68,33 @@ public class AntiTouchAlertService extends Service implements SensorEventListene
 
         if (isAntiTouchAlertEnabled) {
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-            Sensor defaultSensor = sensorManager.getDefaultSensor(1);
-            acceleration = 0.0f;
-            accelerationCurrent = 9.80665f;
-            accelerationLast = 9.80665f;
-            sensorManager.registerListener(this, defaultSensor, 0);
+            Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-            // Create a pending intent to open when clicked on the notification
-            Intent notificationIntent = new Intent(this, AntiTouchAlertActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            if (accelerometer != null) {
+                sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
 
-            // Create the notification required for the service to start
-            Notification notification = new NotificationCompat.Builder(this, ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID)
-                    .setContentTitle("Anti Touch Alert")
-                    .setContentText("Anti touch alert feature is now active")
-                    .setSmallIcon(R.drawable.ic_anti_touch)
-                    .setContentIntent(pendingIntent)
-                    .setOngoing(true)
-                    .build();
+                // Create a pending intent to open when clicked on the notification
+                Intent notificationIntent = new Intent(this, AntiTouchAlertActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-            // Start foreground service
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification);
+                // Create the notification required for the service to start
+                Notification notification = new NotificationCompat.Builder(this, ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID)
+                        .setContentTitle("Anti Touch Alert")
+                        .setContentText("Anti touch alert feature is now active")
+                        .setSmallIcon(R.drawable.ic_anti_touch)
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(true)
+                        .build();
+
+                // Start foreground service
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification);
+                } else {
+                    startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                }
             } else {
-                startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                Log.e(ANTI_TOUCH_ALERT_SERVICE_TAG, "Accelerometer sensor not available.");
+                stopSelf();
             }
         }
 
@@ -118,23 +119,19 @@ public class AntiTouchAlertService extends Service implements SensorEventListene
     }
 
     @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == 1) {
-            float[] fArr = (float[]) sensorEvent.values.clone();
-            float f1 = fArr[0];
-            float f2 = fArr[1];
-            float f3 = fArr[2];
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            // Calculate delta acceleration
+            double deltaAcceleration = calculateDeltaAcceleration(event.values) - SensorManager.GRAVITY_EARTH;
 
-            accelerationLast = accelerationCurrent;
+            // Read the sensitivity threshold from preferences
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            int sensitivityThreshold = prefs.getInt(PreferenceKeyManager.getPreferenceKeyItem(Constants.ANTI_TOUCH_ALERT_SENSITIVITY).getKey(), 5);
 
-            float sqrt = (float) Math.sqrt(Math.pow(f1, 2) + Math.pow(f2, 2) + Math.pow(f3, 2));
-            accelerationCurrent = sqrt;
+            // Determine if the alert should be triggered
+            boolean isAlertTriggered = deltaAcceleration > sensitivityThreshold;
 
-            float f4 = (acceleration * 0.5f) + (sqrt - accelerationLast);
-            acceleration = f4;
-
-            if (f4 > 1.0f) {
-                // TODO: play alert
+            if (isAlertTriggered) {
                 // TODO: set flash
                 // TODO: set vibrate
                 // Get selected tone
@@ -163,6 +160,7 @@ public class AntiTouchAlertService extends Service implements SensorEventListene
                     showNotification(this, ANTI_TOUCH_ALERT_NOTIFICATION_ID, notification);
                 }
             }
+
             // TODO: properly exit by removing notification once not moving
             //            else {
             //                if (mediaPlayer != null && mediaPlayer.isPlaying()) {

@@ -98,6 +98,12 @@ public class Utils {
         notificationManager.cancel(notificationId);
     }
 
+    public static double calculateDeltaAcceleration(float[] linearAcceleration) {
+        return Math.sqrt(Math.pow(linearAcceleration[0], 2) +
+                Math.pow(linearAcceleration[1], 2) +
+                Math.pow(linearAcceleration[2], 2));
+    }
+
     // Prevent instantiation
     private Utils() {
         throw new UnsupportedOperationException("Utils class cannot be instantiated");
