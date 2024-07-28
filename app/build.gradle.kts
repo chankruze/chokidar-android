@@ -25,12 +25,27 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     buildFeatures {
         viewBinding = true
+    }
+
+    applicationVariants.all {
+        outputs.all {
+            val appName = project.name
+            val versionCode = this@all.versionCode
+            val variantName = name
+            val fileExtension = if (outputFile.name.endsWith(".apk")) "apk" else "aab"
+
+            val newFileName = "${appName}-${variantName}-${versionCode}.${fileExtension}"
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
+                newFileName
+        }
     }
 }
 
