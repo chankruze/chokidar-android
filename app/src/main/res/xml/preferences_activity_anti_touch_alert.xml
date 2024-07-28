@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <SwitchPreferenceCompat
-        android:icon="@drawable/ic_pocket_alarm"
         android:defaultValue="false"
+        android:icon="@drawable/ic_pocket_alarm"
         android:key="anti_touch_alert_switch"
         android:summary="Toggle this switch to enable or disable anti touch alert"
         android:title="Enable Anti Touch Alert" />
 
     <ListPreference
-        android:icon="@drawable/outline_music_note_24"
-        android:key="anti_touch_alert_tone_picker"
-        android:title="Anti Touch Alert Tone"
-        android:entries="@array/alarm_tone_names"
-        android:entryValues="@array/alarm_tone_values"
         android:defaultValue="tone1"
         android:dialogTitle="Select Alert Tone"
-        android:summary="%s"/>
+        android:entries="@array/alarm_tone_names"
+        android:entryValues="@array/alarm_tone_values"
+        android:icon="@drawable/outline_music_note_24"
+        android:key="anti_touch_alert_tone_picker"
+        android:summary="%s"
+        android:title="Anti Touch Alert Tone" />
+
+    <SeekBarPreference
+        android:defaultValue="5"
+        android:icon="@drawable/outline_touch_app_24"
+        android:key="anti_touch_alert_sensitivity"
+        android:max="10"
+        android:summary="Slide the seekbar to set sensitivity"
+        android:title="Touch Sensitivity"
+        app:showSeekBarValue="true" />
+
 </PreferenceScreen>

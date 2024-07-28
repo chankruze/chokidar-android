@@ -6,6 +6,7 @@ public class Constants {
     public static final String FULL_BATTERY_ALERT_TONE_PICKER = "FULL_BATTERY_ALERT_TONE_PICKER";
     public static final String ANTI_TOUCH_ALERT_SWITCH = "ANTI_TOUCH_ALERT_SWITCH";
     public static final String ANTI_TOUCH_ALERT_TONE_PICKER = "ANTI_TOUCH_ALERT_TONE_PICKER";
+    public static final String ANTI_TOUCH_ALERT_SENSITIVITY = "ANTI_TOUCH_ALERT_SENSITIVITY";
     public static final String POCKET_ALARM_SWITCH = "POCKET_ALARM_SWITCH";
     public static final String POCKET_ALARM_TONE_PICKER = "POCKET_ALARM_TONE_PICKER";
     public static final String CHARGER_REMOVAL_ALERT_SWITCH = "CHARGER_REMOVAL_ALERT_SWITCH";

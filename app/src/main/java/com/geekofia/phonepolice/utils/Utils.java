@@ -56,6 +56,18 @@ public class Utils {
         }
     }
 
+    public static MediaPlayer setupMediaPlayer(Context context, String tone, boolean setLooping) {
+        try {
+            MediaPlayer mediaPlayer = MediaPlayer.create(context, getToneResource(tone));
+            mediaPlayer.setLooping(setLooping);
+            mediaPlayer.setVolume(100.0f, 100.0f);
+            return mediaPlayer;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Failed to create MediaPlayer with the selected tone");
+        }
+    }
+
     public static void createNotificationChannel(Context context, String channelId, String channelName, int importance, String channelDescription) {
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

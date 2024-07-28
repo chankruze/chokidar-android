@@ -161,7 +161,7 @@ public class AntiTouchAlertService extends Service implements SensorEventListene
                     // Create a new notification and swap it with existing one
                     Notification notification = new NotificationCompat.Builder(this, ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID)
                             .setContentTitle("Anti Touch Alert")
-                            .setContentText("Your device is being moved.")
+                            .setContentText("Some one is touching your device!")
                             .setSmallIcon(R.drawable.ic_anti_touch)
                             .setOngoing(true)
                             .build();
