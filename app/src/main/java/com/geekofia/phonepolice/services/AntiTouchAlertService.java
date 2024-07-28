@@ -5,10 +5,7 @@ import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_NOTIFICA
 import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_SERVICE_ID;
 import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID;
 import static com.geekofia.phonepolice.utils.Constants.ANTI_TOUCH_ALERT_SERVICE_TAG;
-import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_ALERT_NOTIFICATION_ID;
-import static com.geekofia.phonepolice.utils.Constants.FULL_BATTERY_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID;
 import static com.geekofia.phonepolice.utils.Utils.createNotificationChannel;
-import static com.geekofia.phonepolice.utils.Utils.dismissNotification;
 import static com.geekofia.phonepolice.utils.Utils.getSelectedTone;
 import static com.geekofia.phonepolice.utils.Utils.setupMediaPlayer;
 import static com.geekofia.phonepolice.utils.Utils.showNotification;
@@ -26,7 +23,6 @@ import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -37,7 +33,6 @@ import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.activities.AntiTouchAlertActivity;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
-import com.geekofia.phonepolice.utils.Utils;
 
 public class AntiTouchAlertService extends Service implements SensorEventListener {
     private float acceleration;
@@ -63,44 +58,43 @@ public class AntiTouchAlertService extends Service implements SensorEventListene
                 "Anti Touch Alert",
                 NotificationManager.IMPORTANCE_DEFAULT,
                 "Notifications for anti touch alert");
-
-        // Check if the full battery alert switch is enabled
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isAntiTouchAlertEnabled = prefs.getBoolean(PreferenceKeyManager.getPreferenceKeyItem(Constants.ANTI_TOUCH_ALERT_SWITCH).getKey(), false);
-
-        if (isAntiTouchAlertEnabled) {
-            // TODO: register sensor listener
-            sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-            Sensor defaultSensor = sensorManager.getDefaultSensor(1);
-            acceleration = 0.0f;
-            accelerationCurrent = 9.80665f;
-            accelerationLast = 9.80665f;
-            sensorManager.registerListener(this, defaultSensor, 0);
-        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(ANTI_TOUCH_ALERT_SERVICE_TAG, "onStartCommand executed");
 
-        // Create a pending intent to open when clicked on the notification
-        Intent notificationIntent = new Intent(this, AntiTouchAlertActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        // Check if the anti touch alert switch is enabled
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isAntiTouchAlertEnabled = prefs.getBoolean(PreferenceKeyManager.getPreferenceKeyItem(Constants.ANTI_TOUCH_ALERT_SWITCH).getKey(), false);
 
-        // Create the notification required for the service to start
-        Notification notification = new NotificationCompat.Builder(this, ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Anti Touch Alert")
-                .setContentText("Anti touch alert feature is now active")
-                .setSmallIcon(R.drawable.ic_anti_touch)
-                .setContentIntent(pendingIntent)
-                .setOngoing(true)
-                .build();
+        if (isAntiTouchAlertEnabled) {
+            sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+            Sensor defaultSensor = sensorManager.getDefaultSensor(1);
+            acceleration = 0.0f;
+            accelerationCurrent = 9.80665f;
+            accelerationLast = 9.80665f;
+            sensorManager.registerListener(this, defaultSensor, 0);
 
-        // Start foreground service
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification);
-        } else {
-            startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            // Create a pending intent to open when clicked on the notification
+            Intent notificationIntent = new Intent(this, AntiTouchAlertActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+            // Create the notification required for the service to start
+            Notification notification = new NotificationCompat.Builder(this, ANTI_TOUCH_ALERT_SERVICE_NOTIFICATION_CHANNEL_ID)
+                    .setContentTitle("Anti Touch Alert")
+                    .setContentText("Anti touch alert feature is now active")
+                    .setSmallIcon(R.drawable.ic_anti_touch)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
+                    .build();
+
+            // Start foreground service
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification);
+            } else {
+                startForeground(ANTI_TOUCH_ALERT_SERVICE_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            }
         }
 
         return Service.START_STICKY;
