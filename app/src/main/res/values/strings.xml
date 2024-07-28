@@ -12,13 +12,13 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="account_title">Account</string>
-    <string name="notifications_title">Notifications</string>
+    <string name="title_notifications">Notifications</string>
     <string name="logout_title">Logout</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="home_title">Home</string>
-    <string name="profile_menu_title">Profile</string>
-    <string name="logout_menu_title">Logout</string>
+    <string name="title_account">Profile</string>
+    <string name="title_logout">Logout</string>
     <string name="desc_brand_banner">Brand banner</string>
     <string name="hint_enter_pin">Enter PIN</string>
     <string name="hint_confirm_pin">Confirm PIN</string>
@@ -28,4 +28,16 @@
     <string name="desc_pocket_alarm">If someone tries to get rid of the phone from pocket or purse an alarm will explode alerting you.</string>
     <string name="desc_anti_touch_alert">A loud ring will alert if someone touches or moves your device.</string>
     <string name="desc_charger_removal_alert">Notifies when charging cable is unplugged.</string>
+    <string name="title_intruder_alert">Intruder Alert</string>
+    <string name="title_anti_touch_detection">Anti Touch Detection</string>
+    <string name="title_wrong_password_alert">Wrong Password Alert</string>
+    <string name="title_charger_removal_alert">Charger Removal Alert</string>
+    <string name="title_full_battery_alert">Full Battery Alert</string>
+    <string name="title_pocket_alarm">Pocket Alarm</string>
+    <string name="title_usb_detection">USB Detection</string>
+    <string name="title_privacy_policy">Privacy Policy</string>
+    <string name="title_rate_app"><![CDATA[Rate & Review App]]></string>
+    <string name="title_share_app">Share App</string>
+    <string name="title_settings">Settings</string>
+    <string name="text_share_app">Hey! check this amazing app out.</string>
 </resources>

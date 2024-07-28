@@ -4,14 +4,19 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
+
+import java.util.Objects;
 
 public class Utils {
 
@@ -102,6 +107,32 @@ public class Utils {
         return Math.sqrt(Math.pow(linearAcceleration[0], 2) +
                 Math.pow(linearAcceleration[1], 2) +
                 Math.pow(linearAcceleration[2], 2));
+    }
+
+    public static void rateApp(Context context) {
+        // Rate intent
+        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("https://play.google.com/store/apps/details?id=" + context.getPackageName()))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // Start activity with rate intent
+        context.startActivity(intent);
+    }
+
+    public static void shareApp(Context context) {
+        // Share Intent
+        Intent intent = new Intent("android.intent.action.SEND")
+                .setType("text/plain")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra("android.intent.extra.TEXT", context.getString(R.string.text_share_app) + "\n\nhttps://play.google.com/store/apps/details?id=" + context.getPackageName());
+        // Start activity with share intent
+        context.startActivity(intent);
+    }
+
+    public static void showPrivacyPolicy(Context context) {
+        // Create show intent
+        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("http://redapps.in/apps_legal/phone_police_privacy.html"))
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // Start activity with show intent
+        context.startActivity(intent);
     }
 
     // Prevent instantiation

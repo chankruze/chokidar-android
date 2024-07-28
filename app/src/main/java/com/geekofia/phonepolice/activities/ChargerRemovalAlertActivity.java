@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,6 +56,16 @@ public class ChargerRemovalAlertActivity extends AppCompatActivity implements Sh
 
         // Register the preference change listener
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle toolbar back button click
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // Close this activity and return to previous
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

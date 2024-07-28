@@ -1,19 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/nav_home"
-        android:icon="@drawable/outline_home_24"
-        android:title="@string/home_title" />
-    <item
-        android:id="@+id/nav_account"
-        android:icon="@drawable/outline_account_circle_24"
-        android:title="@string/profile_menu_title" />
-    <item
-        android:id="@+id/nav_preferences"
-        android:icon="@drawable/outline_settings_24"
-        android:title="@string/logout_menu_title" />
-    <item
-        android:id="@+id/nav_logout"
-        android:icon="@drawable/outline_logout_24"
-        android:title="@string/logout_menu_title" />
+    <group
+        android:id="@+id/app_activities_group"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/outline_home_24"
+            android:title="@string/home_title" />
+        <item
+            android:id="@+id/nav_intruder_alert"
+            android:icon="@drawable/ic_intruder"
+            android:title="@string/title_intruder_alert" />
+        <item
+            android:id="@+id/nav_anti_touch_alert"
+            android:icon="@drawable/ic_anti_touch"
+            android:title="@string/title_anti_touch_detection" />
+        <item
+            android:id="@+id/nav_wrong_password_alert"
+            android:icon="@drawable/ic_wrong_password"
+            android:title="@string/title_wrong_password_alert" />
+        <item
+            android:id="@+id/nav_charger_removal_alert"
+            android:icon="@drawable/ic_charger_removal"
+            android:title="@string/title_charger_removal_alert" />
+        <item
+            android:id="@+id/nav_full_battery_alert"
+            android:icon="@drawable/ic_full_battery"
+            android:title="@string/title_full_battery_alert" />
+        <item
+            android:id="@+id/nav_pocket_alarm"
+            android:icon="@drawable/ic_pocket_alarm"
+            android:title="@string/title_pocket_alarm" />
+        <item
+            android:id="@+id/nav_usb_detection"
+            android:icon="@drawable/outline_usb_24"
+            android:title="@string/title_usb_detection" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/outline_settings_24"
+            android:title="@string/title_settings" />
+    </group>
+    <group
+        android:id="@+id/app_feedback_actions_group"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_share_app"
+            android:icon="@drawable/outline_share_24"
+            android:title="@string/title_share_app" />
+        <item
+            android:id="@+id/nav_rate_app"
+            android:icon="@drawable/outline_rate_review_24"
+            android:title="@string/title_rate_app" />
+        <item
+            android:id="@+id/nav_privacy_policy"
+            android:icon="@drawable/outline_privacy_tip_24"
+            android:title="@string/title_privacy_policy" />
+    </group>
+    <group
+        android:id="@+id/app_user_actions_group"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/outline_account_circle_24"
+            android:title="@string/title_account" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/outline_logout_24"
+            android:title="@string/title_logout" />
+    </group>
 </menu>

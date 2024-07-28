@@ -21,7 +21,6 @@ import androidx.preference.PreferenceManager;
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.databinding.ActivityAntiTouchAlertBinding;
 import com.geekofia.phonepolice.services.AntiTouchAlertService;
-import com.geekofia.phonepolice.services.AntiTouchAlertService;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 import com.geekofia.phonepolice.utils.Utils;
@@ -128,7 +127,6 @@ public class AntiTouchAlertActivity extends AppCompatActivity implements SharedP
         }
         return false;
     }
-
 
     public static class AntiTouchAlertSettingsFragment extends PreferenceFragmentCompat {
         @Override

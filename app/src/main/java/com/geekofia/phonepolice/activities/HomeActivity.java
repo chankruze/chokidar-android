@@ -1,7 +1,11 @@
 package com.geekofia.phonepolice.activities;
 
+import static com.geekofia.phonepolice.utils.Utils.rateApp;
+import static com.geekofia.phonepolice.utils.Utils.shareApp;
+import static com.geekofia.phonepolice.utils.Utils.showPrivacyPolicy;
+import static com.geekofia.phonepolice.utils.Utils.showToast;
+
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,6 +15,7 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -22,6 +27,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.geekofia.phonepolice.MainActivity;
 import com.geekofia.phonepolice.adapters.SafetyFeatureCardAdapter;
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.databinding.ActivityHomeBinding;
@@ -33,14 +39,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private ActivityHomeBinding binding;
     private DrawerLayout drawerLayout;
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityHomeBinding.inflate(getLayoutInflater());
+        ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Toolbar toolbar = binding.toolbarHome;
@@ -59,28 +64,30 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         List<SafetyFeatureCardItem> safetyFeatureCardItemList = new ArrayList<>();
         // Add card items to the list
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem("Intruder Alert", R.drawable.ic_intruder, null));
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem("Anti Touch Detection", getString(R.string.desc_anti_touch_alert), R.drawable.ic_anti_touch, AntiTouchAlertActivity.class));
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem("Wrong Password Alert", R.drawable.ic_wrong_password, null));
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem("Charger Removal Alert", getString(R.string.desc_charger_removal_alert), R.drawable.ic_charger_removal, ChargerRemovalAlertActivity.class));
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem("Full Battery Alert", getString(R.string.desc_full_battery_alert), R.drawable.outline_battery_charging_full_24, FullBatteryAlertActivity.class));
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem("Pocket Alarm", getString(R.string.desc_pocket_alarm), R.drawable.ic_pocket_alarm, PocketAlarmActivity.class));
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem("USB Detection", R.drawable.outline_usb_24, null));
+        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_intruder_alert), R.drawable.ic_intruder, null));
+        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_anti_touch_detection), getString(R.string.desc_anti_touch_alert), R.drawable.ic_anti_touch, AntiTouchAlertActivity.class));
+        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_wrong_password_alert), R.drawable.ic_wrong_password, null));
+        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_charger_removal_alert), getString(R.string.desc_charger_removal_alert), R.drawable.ic_charger_removal, ChargerRemovalAlertActivity.class));
+        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_full_battery_alert), getString(R.string.desc_full_battery_alert), R.drawable.ic_full_battery, FullBatteryAlertActivity.class));
+        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_pocket_alarm), getString(R.string.desc_pocket_alarm), R.drawable.ic_pocket_alarm, PocketAlarmActivity.class));
+        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_usb_detection), R.drawable.outline_usb_24, null));
 
         SafetyFeatureCardAdapter safetyFeatureCardAdapter = new SafetyFeatureCardAdapter(this, safetyFeatureCardItemList);
         binding.recyclerView.setAdapter(safetyFeatureCardAdapter);
 
         // Request notification permission
         requestNotificationPermission();
-    }
 
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    showExitDialog();
+                }
+            }
+        });
     }
 
     @Override
@@ -88,10 +95,50 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int itemId = item.getItemId();
 
-        if (itemId == R.id.nav_home) {// Handle home action
-        } else if (itemId == R.id.nav_account) {// Handle profile action
-        } else if (itemId == R.id.nav_logout) {// Handle settings action
+        if (itemId == R.id.nav_home) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else if (itemId == R.id.nav_intruder_alert) {
+            // TODO
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else if (itemId == R.id.nav_anti_touch_alert) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            Intent intent = new Intent(this, AntiTouchAlertActivity.class);
+            startActivity(intent);
+        } else if (itemId == R.id.nav_wrong_password_alert) {
+            // TODO
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else if (itemId == R.id.nav_charger_removal_alert) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            Intent intent = new Intent(this, ChargerRemovalAlertActivity.class);
+            startActivity(intent);
+        } else if (itemId == R.id.nav_full_battery_alert) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            Intent intent = new Intent(this, FullBatteryAlertActivity.class);
+            startActivity(intent);
+        } else if (itemId == R.id.nav_pocket_alarm) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            Intent intent = new Intent(this, PocketAlarmActivity.class);
+            startActivity(intent);
+        } else if (itemId == R.id.nav_usb_detection) {
+            // TODO
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else if (itemId == R.id.nav_settings) {
+            // TODO
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else if (itemId == R.id.nav_share_app) {
+            shareApp(this);
+        } else if (itemId == R.id.nav_rate_app) {
+            rateApp(this);
+        } else if (itemId == R.id.nav_privacy_policy) {
+            showPrivacyPolicy(this);
+        } else if (itemId == R.id.nav_account) {
+            showToast(this, "Not implemented yet");
+        } else if (itemId == R.id.nav_logout) {
+            finish();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
+
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -133,17 +180,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showPermissionDeniedDialog() {
+        // Alert dialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Notification Permission Required");
         builder.setMessage("This app requires notification permission to alert you about important updates. Please enable it in the app settings.");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                openAppSettings();
-            }
-        });
-
+        builder.setPositiveButton("OK", (dialog, which) -> openAppSettings());
+        // Create alert dialog
         AlertDialog dialog = builder.create();
+        // Show the dialog
         dialog.show();
     }
 
@@ -157,5 +201,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .setData(Uri.fromParts("package", getPackageName(), null));
         }
         startActivity(intent);
+    }
+
+    private void showExitDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Exit App")
+                .setMessage("Are you sure you want to exit the app?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // Finish the activity
+                    finish();
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    // Dismiss the dialog
+                    dialog.dismiss();
+                })
+                .create()
+                .show();
     }
 }
