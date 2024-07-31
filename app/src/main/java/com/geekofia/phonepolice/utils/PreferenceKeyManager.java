@@ -26,6 +26,10 @@ public class PreferenceKeyManager {
         // AntiTouchAlert Preferences
         preferenceKeyItemHashMap.put(Constants.CHARGER_REMOVAL_ALERT_SWITCH, new PreferenceKeyItem("charger_removal_alert_switch", "Charger Removal Alert"));
         preferenceKeyItemHashMap.put(Constants.CHARGER_REMOVAL_ALERT_TONE_PICKER, new PreferenceKeyItem("charger_removal_alert_tone_picker", "Charger Removal Alert Tone"));
+
+        // WrongPasswordAlert Preferences
+        preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_SWITCH, new PreferenceKeyItem("wrong_password_alert_switch", "Wrong Password Alert"));
+        preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_TONE_PICKER, new PreferenceKeyItem("wrong_password_alert_tone_picker", "Wrong Password Alert Tone"));        preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_TRIGGER_PICKER, new PreferenceKeyItem("wrong_password_alert_trigger_picker", "Wrong Password Alert Tone"));
     }
 
     public static PreferenceKeyItem getPreferenceKeyItem(String key) {

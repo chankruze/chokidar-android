@@ -17,4 +17,20 @@
         <item>tone5</item>
         <item>tone6</item>
     </string-array>
+
+    <string-array name="one_to_five_names">
+        <item>1 Attempt</item>
+        <item>2 Attempts</item>
+        <item>3 Attempts</item>
+        <item>4 Attempts</item>
+        <item>5 Attempts</item>
+    </string-array>
+
+    <string-array name="one_to_five_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 </resources>
