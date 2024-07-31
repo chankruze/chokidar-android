@@ -71,7 +71,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         List<SafetyFeatureCardItem> safetyFeatureCardItemList = new ArrayList<>();
         // Add card items to the list
-        safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_intruder_alert), R.drawable.ic_intruder, null));
         safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_anti_touch_detection), getString(R.string.desc_anti_touch_alert), R.drawable.ic_anti_touch, AntiTouchAlertActivity.class));
         safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_wrong_password_alert), R.drawable.ic_wrong_password, WrongPasswordAlertActivity.class));
         safetyFeatureCardItemList.add(new SafetyFeatureCardItem(getString(R.string.title_charger_removal_alert), getString(R.string.desc_charger_removal_alert), R.drawable.ic_charger_removal, ChargerRemovalAlertActivity.class));

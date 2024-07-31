@@ -29,7 +29,7 @@ public class PreferenceKeyManager {
 
         // WrongPasswordAlert Preferences
         preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_SWITCH, new PreferenceKeyItem("wrong_password_alert_switch", "Wrong Password Alert"));
-        preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_TONE_PICKER, new PreferenceKeyItem("wrong_password_alert_tone_picker", "Wrong Password Alert Tone"));        preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_TRIGGER_PICKER, new PreferenceKeyItem("wrong_password_alert_trigger_picker", "Wrong Password Alert Tone"));
+        preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_TONE_PICKER, new PreferenceKeyItem("wrong_password_alert_tone_picker", "Wrong Password Alert Tone"));        preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_TRIGGER_PICKER, new PreferenceKeyItem("wrong_password_alert_trigger_picker", "Wrong Password Alert Tone"));preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_MAX_ATTEMPTS, new PreferenceKeyItem("wrong_password_alert_max_attempts", "Wrong Password Alert Max Attempts"));preferenceKeyItemHashMap.put(Constants.WRONG_PASSWORD_ALERT_FAILED_ATTEMPTS, new PreferenceKeyItem("wrong_password_alert_failed_attempts", "Wrong Password Alert Failed Attempts"));
     }
 
     public static PreferenceKeyItem getPreferenceKeyItem(String key) {

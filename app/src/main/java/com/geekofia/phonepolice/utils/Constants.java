@@ -14,6 +14,8 @@ public class Constants {
     public static final String WRONG_PASSWORD_ALERT_SWITCH = "WRONG_PASSWORD_ALERT_SWITCH";
     public static final String WRONG_PASSWORD_ALERT_TONE_PICKER = "WRONG_PASSWORD_ALERT_TONE_PICKER";
     public static final String WRONG_PASSWORD_ALERT_TRIGGER_PICKER = "WRONG_PASSWORD_ALERT_TRIGGER_PICKER";
+    public static final String WRONG_PASSWORD_ALERT_MAX_ATTEMPTS="WRONG_PASSWORD_ALERT_MAX_ATTEMPTS";
+    public static final String WRONG_PASSWORD_ALERT_FAILED_ATTEMPTS="WRONG_PASSWORD_ALERT_FAILED_ATTEMPTS";
 
     // Service Ids
     public static final int FULL_BATTERY_ALERT_SERVICE_ID = 6767;
@@ -41,6 +43,7 @@ public class Constants {
     public static final String POCKET_ALARM_SERVICE_TAG = "PocketAlarmService";
     public static final String ANTI_TOUCH_ALERT_SERVICE_TAG = "AntiTouchAlertService";
     public static final String CHARGER_REMOVAL_ALERT_SERVICE_TAG = "ChargerRemovalAlertService";
+    public static final String WRONG_PASSWORD_ALERT_RECEIVER_TAG = "WrongPasswordAlertReceiver";
     public static final String WRONG_PASSWORD_ALERT_SERVICE_TAG = "WrongPasswordAlertService";
 
     // Prevent instantiation

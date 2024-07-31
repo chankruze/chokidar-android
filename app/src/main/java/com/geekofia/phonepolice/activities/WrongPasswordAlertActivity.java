@@ -1,15 +1,19 @@
 package com.geekofia.phonepolice.activities;
 
 import static com.geekofia.phonepolice.utils.Utils.setupMediaPlayer;
+import static com.geekofia.phonepolice.utils.Utils.showToast;
 
-import android.app.ActivityManager;
-import android.content.Context;
+import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,7 +24,8 @@ import androidx.preference.PreferenceManager;
 
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.databinding.ActivityWrongPasswordAlertBinding;
-import com.geekofia.phonepolice.services.WrongPasswordAlertService;
+import com.geekofia.phonepolice.receivers.WrongPasswordReceiver;
+import com.geekofia.phonepolice.services.ChargerRemovalAlertService;
 import com.geekofia.phonepolice.services.WrongPasswordAlertService;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
@@ -29,6 +34,7 @@ import com.geekofia.phonepolice.utils.Utils;
 public class WrongPasswordAlertActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private SharedPreferences sharedPreferences;
     private MediaPlayer mediaPlayer;
+    private ActivityResultLauncher<Intent> enableAdminLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +64,18 @@ public class WrongPasswordAlertActivity extends AppCompatActivity implements Sha
 
         // Register the preference change listener
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+        // Initialize the launcher
+        enableAdminLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+
+                    } else {
+
+                    }
+                }
+        );
     }
 
     @Override
@@ -80,15 +98,28 @@ public class WrongPasswordAlertActivity extends AppCompatActivity implements Sha
                 String message = PreferenceKeyManager.getPreferenceKeyItem(Constants.WRONG_PASSWORD_ALERT_SWITCH).getFeatureName() + (isAlertEnabled ? " Enabled" : " Disabled");
                 Utils.showToast(this, message);
 
-                if (isAlertEnabled && !isWrongPasswordAlertServiceRunning()) {
-                    // Start the battery service with start intent
-                    Intent startIntent = new Intent(this, WrongPasswordAlertService.class);
-                    ContextCompat.startForegroundService(this, startIntent);
-                } else if (!isAlertEnabled && isWrongPasswordAlertServiceRunning()) {
-                    // Stop foreground service with stop intent
-                    // https://developer.android.com/develop/background-work/services#Stopping
-                    Intent stopIntent = new Intent(this, WrongPasswordAlertService.class);
-                    this.stopService(stopIntent);
+                // Device policy manager
+                DevicePolicyManager devicePolicyManager;
+                devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+                // Admin component
+                ComponentName adminComponent;
+                adminComponent = new ComponentName(this, WrongPasswordReceiver.class);
+
+                if (isAlertEnabled) {
+                    // Ask for device admin permission
+                    if (!devicePolicyManager.isAdminActive(adminComponent)) {
+                        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+                        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Enable device admin to use this feature.");
+                        // Use the launcher to start the activity
+                        enableAdminLauncher.launch(intent);
+                    }
+                } else {
+                    // Remove device admin permission
+                    if (devicePolicyManager.isAdminActive(adminComponent)) {
+                        devicePolicyManager.removeActiveAdmin(adminComponent);
+                        showToast(this, "Device admin access removed");
+                    }
                 }
             } else if (PreferenceKeyManager.getPreferenceKeyItem(Constants.WRONG_PASSWORD_ALERT_TONE_PICKER).getKey().equals(key)) {
                 // Play the newly selected tone
@@ -120,16 +151,6 @@ public class WrongPasswordAlertActivity extends AppCompatActivity implements Sha
         }
     }
 
-    public boolean isWrongPasswordAlertServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-            if (WrongPasswordAlertService.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static class WrongPasswordAlertSettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -145,5 +166,13 @@ public class WrongPasswordAlertActivity extends AppCompatActivity implements Sha
                 }
             }
         }
+    }
+
+    private void enableDeviceAdmin() {
+        ComponentName componentName = new ComponentName(this, getClass());
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "This app requires device admin permissions to monitor password attempts.");
+        startActivityForResult(intent, 1);
     }
 }
