@@ -46,7 +46,7 @@ public class WrongPasswordReceiver extends DeviceAdminReceiver {
         // Get the state of the switch
         boolean isWrongPasswordAlertEnabled = preferences.getBoolean(PreferenceKeyManager.getPreferenceKeyItem(Constants.WRONG_PASSWORD_ALERT_SWITCH).getKey(), false);
         // Get the selected tone
-        int maxWrongPasswordAttempts = preferences.getInt(PreferenceKeyManager.getPreferenceKeyItem(WRONG_PASSWORD_ALERT_MAX_ATTEMPTS).getKey(), 1);
+        int maxWrongPasswordAttempts = Integer.parseInt(preferences.getString(PreferenceKeyManager.getPreferenceKeyItem(WRONG_PASSWORD_ALERT_MAX_ATTEMPTS).getKey(), "1"));
 
         // Increment the count
         failedAttempts++;
@@ -55,12 +55,11 @@ public class WrongPasswordReceiver extends DeviceAdminReceiver {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(PreferenceKeyManager.getPreferenceKeyItem(WRONG_PASSWORD_ALERT_FAILED_ATTEMPTS).getKey(), failedAttempts);
         editor.apply();
+        
+        String message = "Wrong attempts: " + failedAttempts + " | Max attempts: " + maxWrongPasswordAttempts;
+        Log.d(WRONG_PASSWORD_ALERT_RECEIVER_TAG, message);
 
-        // Display a toast with the current attempt count
-        showToast(context, "Wrong password attempt count: " + failedAttempts);
-        Log.d(WRONG_PASSWORD_ALERT_RECEIVER_TAG, "Wrong password attempt count: " + failedAttempts);
-
-        if (isWrongPasswordAlertEnabled && failedAttempts >= maxWrongPasswordAttempts) {
+        if (isWrongPasswordAlertEnabled && (failedAttempts >= maxWrongPasswordAttempts)) {
             // Device admin enabled
             // Start the battery service with start intent
             Intent startIntent = new Intent(context, WrongPasswordAlertService.class);
@@ -76,8 +75,6 @@ public class WrongPasswordReceiver extends DeviceAdminReceiver {
         editor.putInt(PreferenceKeyManager.getPreferenceKeyItem(WRONG_PASSWORD_ALERT_FAILED_ATTEMPTS).getKey(), 0);
         editor.apply();
 
-        // Display a toast indicating success
-        showToast(context, "Password succeeded. Attempt count reset.");
         Log.d(WRONG_PASSWORD_ALERT_RECEIVER_TAG, "Password succeeded. Attempt count reset.");
 
         // Device admin not enabled
