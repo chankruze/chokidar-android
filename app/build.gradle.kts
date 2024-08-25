@@ -10,8 +10,8 @@ android {
         applicationId = "com.geekofia.phonepolice"
         minSdk = 24
         targetSdk = 34
-        versionCode = 142
-        versionName = "1.4.2"
+        versionCode = 150
+        versionName = "1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,6 +60,11 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.preference)
     implementation(libs.security.crypto)
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
+    implementation(libs.lifecycle.service)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

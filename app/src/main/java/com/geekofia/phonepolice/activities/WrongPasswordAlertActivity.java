@@ -17,7 +17,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -25,8 +24,6 @@ import androidx.preference.PreferenceManager;
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.databinding.ActivityWrongPasswordAlertBinding;
 import com.geekofia.phonepolice.receivers.WrongPasswordReceiver;
-import com.geekofia.phonepolice.services.ChargerRemovalAlertService;
-import com.geekofia.phonepolice.services.WrongPasswordAlertService;
 import com.geekofia.phonepolice.utils.Constants;
 import com.geekofia.phonepolice.utils.PreferenceKeyManager;
 import com.geekofia.phonepolice.utils.Utils;
@@ -166,13 +163,5 @@ public class WrongPasswordAlertActivity extends AppCompatActivity implements Sha
                 }
             }
         }
-    }
-
-    private void enableDeviceAdmin() {
-        ComponentName componentName = new ComponentName(this, getClass());
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "This app requires device admin permissions to monitor password attempts.");
-        startActivityForResult(intent, 1);
     }
 }

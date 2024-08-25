@@ -51,8 +51,6 @@ public class WrongPasswordAlertService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        // Get the state of the switch
-        boolean isWrongPasswordAlertEnabled = preferences.getBoolean(PreferenceKeyManager.getPreferenceKeyItem(Constants.WRONG_PASSWORD_ALERT_SWITCH).getKey(), false);
         // Get the selected tone
         String selectedTone = getSelectedTone(this, PreferenceKeyManager.getPreferenceKeyItem(Constants.WRONG_PASSWORD_ALERT_TONE_PICKER).getKey());
 

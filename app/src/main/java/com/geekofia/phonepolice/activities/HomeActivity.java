@@ -12,17 +12,20 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -33,7 +36,6 @@ import com.geekofia.phonepolice.adapters.SafetyFeatureCardAdapter;
 import com.geekofia.phonepolice.R;
 import com.geekofia.phonepolice.databinding.ActivityHomeBinding;
 import com.geekofia.phonepolice.models.SafetyFeatureCardItem;
-import com.geekofia.phonepolice.utils.Utils;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -41,7 +43,9 @@ import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
-    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
+    private static final String TAG = "HomeActivity";
+    private ActivityResultLauncher<String[]> requestPermissionLauncher;
+    private ActivityResultLauncher<Intent> requestManageExternalStorageLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +85,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         SafetyFeatureCardAdapter safetyFeatureCardAdapter = new SafetyFeatureCardAdapter(this, safetyFeatureCardItemList);
         binding.recyclerView.setAdapter(safetyFeatureCardAdapter);
 
-        // Request notification permission
-        requestNotificationPermission();
-
         // Handle back button press
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -95,6 +96,86 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+
+        // Initialize the permission launcher
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
+            boolean allPermissionsGranted = true;
+            for (boolean isGranted : permissions.values()) {
+                if (!isGranted) {
+                    allPermissionsGranted = false;
+                    break;
+                }
+            }
+
+            if (allPermissionsGranted) {
+                Log.i(TAG, "All permissions granted");
+            } else {
+                Log.i(TAG, "Some permissions denied");
+                showToast(this, "Some permissions denied");
+            }
+        });
+
+        requestManageExternalStorageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (isManageExternalStoragePermissionGranted()) {
+                Log.i(TAG, "Manage External Storage permission granted");
+            } else {
+                Log.i(TAG, "Manage External Storage permission denied");
+                showToast(this, "Manage External Storage permission denied");
+            }
+        });
+
+        checkPermissions();
+    }
+
+    private void checkPermissions() {
+        List<String> permissionsToRequest = new ArrayList<>();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.CAMERA);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+
+        if (!permissionsToRequest.isEmpty()) {
+            requestPermissionLauncher.launch(permissionsToRequest.toArray(new String[0]));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !isManageExternalStoragePermissionGranted()) {
+            requestManageExternalStoragePermission();
+        }
+
+    }
+
+    private boolean isManageExternalStoragePermissionGranted() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager();
+    }
+
+    private void requestManageExternalStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission Needed")
+                        .setMessage("This app requires access to manage all files. Please grant this permission in Settings.")
+                        .setPositiveButton("Go to Settings", (dialog, which) -> {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                            intent.addCategory("android.intent.category.DEFAULT");
+                            intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
+                            requestManageExternalStorageLauncher.launch(intent);
+                        })
+                        .create()
+                        .show();
+            }
+        }
     }
 
     @Override
@@ -104,16 +185,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (itemId == R.id.nav_home) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else if (itemId == R.id.nav_intruder_alert) {
-            // TODO
-            drawerLayout.closeDrawer(GravityCompat.START);
         } else if (itemId == R.id.nav_anti_touch_alert) {
             drawerLayout.closeDrawer(GravityCompat.START);
             Intent intent = new Intent(this, AntiTouchAlertActivity.class);
             startActivity(intent);
         } else if (itemId == R.id.nav_wrong_password_alert) {
-            // TODO
             drawerLayout.closeDrawer(GravityCompat.START);
+            Intent intent = new Intent(this, WrongPasswordAlertActivity.class);
+            startActivity(intent);
         } else if (itemId == R.id.nav_charger_removal_alert) {
             drawerLayout.closeDrawer(GravityCompat.START);
             Intent intent = new Intent(this, ChargerRemovalAlertActivity.class);
@@ -163,7 +242,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (itemId == R.id.action_settings) {
             // TODO: open settings
             return true;
-        } else if (itemId == R.id.action_cloud_sync) {
+        } else if (itemId == R.id.action_open_gallery) {
             // TODO: sync to cloud
             return true;
         } else if (itemId == R.id.action_logout) {
@@ -175,60 +254,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else {
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, you can now show notifications
-                Utils.showToast(this, "Notification permission granted.");
-            } else {
-                // Permission denied, handle appropriately (e.g., show a message)
-                showPermissionDeniedDialog();
-            }
-        }
-    }
-
-    private void requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                // Request the POST_NOTIFICATIONS permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                        NOTIFICATION_PERMISSION_REQUEST_CODE);
-            }
-        }
-    }
-
-    private void showPermissionDeniedDialog() {
-        // Alert dialog builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Notification Permission Required");
-        builder.setMessage("This app requires notification permission to alert you about important updates. Please enable it in the app settings.");
-        builder.setPositiveButton("OK", (dialog, which) -> openAppSettings());
-        // Create alert dialog
-        AlertDialog dialog = builder.create();
-        // Show the dialog
-        dialog.show();
-    }
-
-    private void openAppSettings() {
-        Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-        } else {
-            intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    .setData(Uri.fromParts("package", getPackageName(), null));
-        }
-        startActivity(intent);
     }
 
     private void showExitDialog() {
