@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Phone Police"
+rootProject.name = "chokidar"
 include(":app")
- 

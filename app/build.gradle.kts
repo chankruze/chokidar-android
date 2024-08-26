@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.geekofia.phonepolice"
+    namespace = "com.geekofia.chokidar"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.geekofia.phonepolice"
+        applicationId = "com.geekofia.chokidar"
         minSdk = 24
         targetSdk = 34
         versionCode = 152
@@ -38,7 +38,7 @@ android {
     applicationVariants.all {
         outputs.all {
             val appName = project.name
-            val versionCode = this@all.versionCode
+            val versionCode = versionCode
             val variantName = name
             val fileExtension = if (outputFile.name.endsWith(".apk")) "apk" else "aab"
 
