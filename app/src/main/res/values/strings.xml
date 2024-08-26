@@ -42,4 +42,6 @@
     <string name="text_share_app">Hey! check this amazing app out.</string>
     <string name="desc_wrong_password_alert">Notifies when someone enters wrong pin or password in lock screen.</string>
     <string name="desc_wrong_password_selfie">Take a photo from front camera when alert is triggered.</string>
+    <string name="title_menu_action_info">Details</string>
+    <string name="title_menu_action_share">Share</string>
 </resources>

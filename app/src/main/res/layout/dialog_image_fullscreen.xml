@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/md_theme_light_primaryContainer"
+    android:padding="16dp">
+
+    <!-- Close Button -->
+    <ImageView
+        android:id="@+id/imageViewClose"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Close Dialog"
+        android:padding="8dp"
+        android:src="@drawable/outline_cloud_sync_24" />
+
+    <!-- ImageView for Full-Screen Image -->
+    <ImageView
+        android:id="@+id/imageViewFull"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@id/imageViewShare"
+        android:layout_below="@id/imageViewClose"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter" />
+
+    <!-- Share Button -->
+    <ImageView
+        android:id="@+id/imageViewShare"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Share Image"
+        android:padding="8dp"
+        android:src="@drawable/outline_share_24" />
+
+</RelativeLayout>

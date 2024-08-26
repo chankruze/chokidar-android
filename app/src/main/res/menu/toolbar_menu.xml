@@ -8,8 +8,8 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_cloud_sync"
-        android:icon="@drawable/outline_cloud_sync_24"
+        android:id="@+id/action_open_gallery"
+        android:icon="@drawable/outline_image_24"
         android:title="@string/title_cloud_sync"
         app:showAsAction="ifRoom" />
 

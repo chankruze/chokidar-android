@@ -54,7 +54,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(binding.getRoot());
 
         // Update toolbar
-        Toolbar toolbar = binding.toolbarHome;
+        Toolbar toolbar = binding.toolbar;
         toolbar.setTitle("Home");
         setSupportActionBar(toolbar);
 
@@ -243,7 +243,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             // TODO: open settings
             return true;
         } else if (itemId == R.id.action_open_gallery) {
-            // TODO: sync to cloud
+            Intent intent = new Intent(this, IntruderGalleryActivity.class);
+            startActivity(intent);
             return true;
         } else if (itemId == R.id.action_logout) {
             drawerLayout.closeDrawer(GravityCompat.START);
