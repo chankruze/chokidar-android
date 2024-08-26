@@ -10,7 +10,7 @@
         android:layout_height="200dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/desc_brand_banner"
-        android:src="@drawable/banner" />
+        android:src="@drawable/chokidar" />
 
 <!--    <TextView-->
 

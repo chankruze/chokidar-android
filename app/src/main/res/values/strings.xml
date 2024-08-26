@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cell Security</string>
+    <string name="app_name">Chokidar</string>
     <string name="card_icon_description">Card icon</string>
     <string name="card_chevron_right">Card chevron right</string>
     <string name="title_activity_login">LoginActivity</string>

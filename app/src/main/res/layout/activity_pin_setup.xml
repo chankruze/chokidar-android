@@ -11,7 +11,7 @@
         android:layout_height="250dp"
         android:contentDescription="@string/desc_brand_banner"
         android:scaleType="centerCrop"
-        android:src="@drawable/banner" />
+        android:src="@drawable/chokidar" />
 
     <LinearLayout
         android:layout_width="match_parent"
