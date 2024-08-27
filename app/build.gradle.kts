@@ -10,8 +10,8 @@ android {
         applicationId = "com.geekofia.chokidar"
         minSdk = 24
         targetSdk = 34
-        versionCode = 152
-        versionName = "1.5.2"
+        versionCode = 154
+        versionName = "1.5.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

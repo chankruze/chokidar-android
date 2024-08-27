@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.FullBatteryAlertActivity">
+    tools:context=".ui.fullbatteryalert.FullBatteryAlertActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_full_battery_alert"

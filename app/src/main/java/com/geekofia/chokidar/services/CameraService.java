@@ -14,11 +14,11 @@ import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
 
 import com.geekofia.chokidar.R;
-import com.geekofia.chokidar.helpers.CameraHelper;
+import com.geekofia.chokidar.utils.CameraUtils;
 
 public class CameraService extends LifecycleService {
     private static final String TAG = "CameraService";
-    private CameraHelper cameraHelper;
+    private CameraUtils cameraHelper;
     private static final String CHANNEL_ID = "camera_service_channel";
 
     @Override
@@ -26,7 +26,7 @@ public class CameraService extends LifecycleService {
         super.onCreate();
         createNotificationChannel();
 
-        cameraHelper = new CameraHelper(this, this);
+        cameraHelper = new CameraUtils(this, this);
         cameraHelper.setOnPictureTakenListener(filePath -> {
             Log.d(TAG, "Picture taken: " + filePath);
             stopSelf(); // Stop service after the picture is taken

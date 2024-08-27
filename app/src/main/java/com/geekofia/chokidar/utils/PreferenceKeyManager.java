@@ -1,7 +1,7 @@
 package com.geekofia.chokidar.utils;
 
 
-import com.geekofia.chokidar.models.PreferenceKeyItem;
+import com.geekofia.chokidar.data.models.PreferenceKeyItem;
 
 import java.util.HashMap;
 import java.util.Map;
