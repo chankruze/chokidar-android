@@ -5,8 +5,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.geekofia.chokidar.ui.auth.PinLoginActivity;
-import com.geekofia.chokidar.ui.auth.PinSetupActivity;
+import com.geekofia.chokidar.ui.auth.AuthActivity;
 import com.geekofia.chokidar.databinding.ActivityMainBinding;
 import com.geekofia.chokidar.utils.SecurePrefs;
 
@@ -22,15 +21,28 @@ public class MainActivity extends AppCompatActivity {
         SecurePrefs securePrefs = new SecurePrefs();
 
         if (securePrefs.isFirstLaunch(this)) {
-            // Redirect to PIN setup screen
-            Intent intent = new Intent(this, PinSetupActivity.class);
+            // If first launch, show AuthOptionsFragment in AuthActivity
+            Intent intent = new Intent(this, AuthActivity.class);
             startActivity(intent);
             finish();
         } else {
-            // Redirect to PIN login screen
-            Intent intent = new Intent(this, PinLoginActivity.class);
-            startActivity(intent);
-            finish();
+            // If not first launch, show LoginFragment in AuthActivity
+            // Check which auth option is selected
+            String authMethod = securePrefs.getAuthMethod(this);
+
+            if ("PIN".equals(authMethod)) {
+                Intent intent = new Intent(this, AuthActivity.class);
+                intent.putExtra("FRAGMENT_NAME", "PIN_LOGIN");
+                startActivity(intent);
+                finish();
+            } else if ("BIOMETRIC".equals(authMethod)) {
+                Intent intent = new Intent(this, AuthActivity.class);
+                intent.putExtra("FRAGMENT_NAME", "BIOMETRIC_LOGIN");
+                startActivity(intent);
+                finish();
+            }
+
+
         }
     }
 }

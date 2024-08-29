@@ -5,9 +5,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-
-    <!-- permissions -->
+    <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
@@ -15,16 +13,13 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"
-        tools:ignore="HighSamplingRate" />
-
-    <!-- queries -->
+        tools:ignore="HighSamplingRate" /> <!-- queries -->
     <queries>
         <intent>
             <action android:name="android.intent.action.BATTERY_CHANGED" />
         </intent>
     </queries>
 
-    <!-- app -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -35,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PhonePolice"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.auth.AuthActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.common.FullScreenImageActivity"
             android:exported="false" />
@@ -54,12 +52,6 @@
             android:name=".ui.pocketalarm.PocketAlarmActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.PinLoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.auth.PinSetupActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.fullbatteryalert.FullBatteryAlertActivity"
             android:exported="false" />
         <activity
@@ -73,9 +65,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- services -->
+        </activity> <!-- services -->
         <service
             android:name=".ui.fullbatteryalert.FullBatteryAlertService"
             android:exported="false"
@@ -99,9 +89,7 @@
         <service
             android:name=".services.CameraService"
             android:exported="false"
-            android:foregroundServiceType="camera" />
-
-        <!-- receivers -->
+            android:foregroundServiceType="camera" /> <!-- receivers -->
         <receiver
             android:name=".ui.wrongpasswordalert.WrongPasswordReceiver"
             android:exported="true"
@@ -116,9 +104,7 @@
                 <action android:name="android.app.action.ACTION_PASSWORD_FAILED" />
                 <action android:name="android.app.action.ACTION_PASSWORD_SUCCEEDED" />
             </intent-filter>
-        </receiver>
-
-        <!-- providers -->
+        </receiver> <!-- providers -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
