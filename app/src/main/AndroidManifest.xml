@@ -12,14 +12,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
-    <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"
         tools:ignore="HighSamplingRate" />
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
 
     <!-- queries -->
     <queries>
@@ -83,28 +79,23 @@
         <service
             android:name=".ui.fullbatteryalert.FullBatteryAlertService"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+            android:foregroundServiceType="mediaPlayback" />
         <service
             android:name=".ui.antitouchalert.AntiTouchAlertService"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+            android:foregroundServiceType="mediaPlayback" />
         <service
             android:name=".ui.pocketalarm.PocketAlarmService"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+            android:foregroundServiceType="mediaPlayback" />
         <service
             android:name=".ui.chargerremovalalert.ChargerRemovalAlertService"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+            android:foregroundServiceType="mediaPlayback" />
         <service
             android:name=".ui.wrongpasswordalert.WrongPasswordAlertService"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+            android:foregroundServiceType="mediaPlayback" />
         <service
             android:name=".services.CameraService"
             android:exported="false"

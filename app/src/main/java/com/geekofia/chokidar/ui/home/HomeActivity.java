@@ -50,7 +50,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private static final String TAG = "HomeActivity";
     private ActivityResultLauncher<String[]> requestPermissionLauncher;
-    private ActivityResultLauncher<Intent> requestManageExternalStorageLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,15 +119,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        requestManageExternalStorageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (isManageExternalStoragePermissionGranted()) {
-                Log.i(TAG, "Manage External Storage permission granted");
-            } else {
-                Log.i(TAG, "Manage External Storage permission denied");
-                showToast(this, "Manage External Storage permission denied");
-            }
-        });
-
         checkPermissions();
     }
 
@@ -153,33 +143,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (!permissionsToRequest.isEmpty()) {
             requestPermissionLauncher.launch(permissionsToRequest.toArray(new String[0]));
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !isManageExternalStoragePermissionGranted()) {
-            requestManageExternalStoragePermission();
-        }
-
-    }
-
-    private boolean isManageExternalStoragePermissionGranted() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager();
-    }
-
-    private void requestManageExternalStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                new AlertDialog.Builder(this)
-                        .setTitle("Permission Needed")
-                        .setMessage("This app requires access to manage all files. Please grant this permission in Settings.")
-                        .setPositiveButton("Go to Settings", (dialog, which) -> {
-                            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                            intent.addCategory("android.intent.category.DEFAULT");
-                            intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
-                            requestManageExternalStorageLauncher.launch(intent);
-                        })
-                        .create()
-                        .show();
-            }
         }
     }
 
