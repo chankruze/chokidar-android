@@ -1,5 +1,20 @@
+import java.net.NetworkInterface
+
 plugins {
     alias(libs.plugins.android.application)
+}
+
+// Function to get the local IPv4 address
+fun getLocalIpAddress(): String {
+    return try {
+        NetworkInterface.getNetworkInterfaces().toList().asSequence()
+            .flatMap { it.inetAddresses.toList() }
+            .firstOrNull { !it.isLoopbackAddress && it.hostAddress.indexOf(':') == -1 }
+            ?.hostAddress ?: "127.0.0.1" // Fallback IP if detection fails
+    } catch (e: Exception) {
+        println("Error retrieving IP address: ${e.message}")
+        "127.0.0.1" // Fallback IP if detection fails
+    }
 }
 
 android {
@@ -18,7 +33,9 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.15:5173\"")
+            val localIpAddress = getLocalIpAddress()
+            buildConfigField("String", "BASE_URL", "\"http://$localIpAddress:5173\"")
+            println("Debug BASE_URL set to: http://$localIpAddress:5173")
         }
         release {
             isMinifyEnabled = true
