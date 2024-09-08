@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.geekofia.chokidar.ui.auth.AuthActivity;
 import com.geekofia.chokidar.ui.auth.PinLoginActivity;
 import com.geekofia.chokidar.ui.auth.PinSetupActivity;
 import com.geekofia.chokidar.databinding.ActivityMainBinding;
@@ -22,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
         SecurePrefs securePrefs = new SecurePrefs();
 
         if (securePrefs.isFirstLaunch(this)) {
-            // Redirect to PIN setup screen
-            Intent intent = new Intent(this, PinSetupActivity.class);
+            Intent intent = new Intent(this, AuthActivity.class);
             startActivity(intent);
             finish();
         } else {
