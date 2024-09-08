@@ -172,7 +172,6 @@ public class AuthActivity extends AppCompatActivity {
 
 
     private void processBarcodes(List<Barcode> barcodes) {
-        Log.e("barcodes:", String.valueOf(barcodes));
         for (Barcode barcode : barcodes) {
             String rawValue = barcode.getRawValue();
 
@@ -186,15 +185,13 @@ public class AuthActivity extends AppCompatActivity {
                     cameraProvider.unbindAll();
                 }
                 imageAnalysis.clearAnalyzer();
-
-                // TODO: show modal for logging in status
                 authenticateDevice(qrData.getDeviceId(), qrData.getDevicePin());
             }
         }
     }
 
     private void authenticateDevice(String deviceId, String pin) {
-        Toast.makeText(this, "Authenticating with Device ID: " + deviceId + " and PIN", Toast.LENGTH_SHORT).show();
+        binding.cameraContainer.setVisibility(View.GONE);
 
         // Implement your backend authentication API call here
         DeviceRepository deviceRepository = new DeviceRepository();
@@ -216,7 +213,7 @@ public class AuthActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable error) {
-
+                        binding.cameraContainer.setVisibility(View.VISIBLE);
                     }
                 });
     }
