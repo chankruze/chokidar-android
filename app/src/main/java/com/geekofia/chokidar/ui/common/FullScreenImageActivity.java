@@ -37,20 +37,22 @@ public class FullScreenImageActivity extends AppCompatActivity {
         ActivityFullScreenImageBinding binding = ActivityFullScreenImageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Update toolbar
-        Toolbar toolbar = binding.toolbar;
-        toolbar.setTitle("Home");
-        setSupportActionBar(toolbar);
-
-        // Enable the Up button
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
         imagePath = getIntent().getStringExtra(EXTRA_IMAGE_PATH);
 
         if (imagePath != null) {
+            // Update toolbar
+            Toolbar toolbar = binding.toolbar;
+            updateToolbar(toolbar, imagePath);
+            setSupportActionBar(toolbar);
+
+            // Enable the Up button
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+            }
+
+
+            updateToolbar(toolbar, imagePath);
             Glide.with(this)
                     .load(imagePath)
                     .into(binding.imageViewFullScreen);
@@ -119,6 +121,18 @@ public class FullScreenImageActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, "Share Intruder Image"));
         } catch (Exception e) {
             showToast(this, "No app found to share image.");
+        }
+    }
+
+    private void updateToolbar(Toolbar toolbar, String imagePath) {
+        if (imagePath != null) {
+            File imageFile = new File(imagePath);
+            String filename = imageFile.getName();
+            String lastModified = new SimpleDateFormat("d MMM yyyy, hh:mm:ss a", Locale.getDefault())
+                    .format(new Date(imageFile.lastModified()));
+
+            toolbar.setTitle(filename);
+            toolbar.setSubtitle(lastModified);
         }
     }
 }

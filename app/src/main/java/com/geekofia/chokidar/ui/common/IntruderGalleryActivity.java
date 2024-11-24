@@ -29,6 +29,7 @@ public class IntruderGalleryActivity extends AppCompatActivity {
         // Update toolbar
         Toolbar toolbar = binding.toolbar;
         toolbar.setTitle("Intruder Gallery");
+        toolbar.setSubtitle("Captured unauthorized access attempts");
         setSupportActionBar(toolbar);
 
         // Enable the Up button
