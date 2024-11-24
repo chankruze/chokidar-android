@@ -56,10 +56,11 @@ public class WrongPasswordReceiver extends DeviceAdminReceiver {
 
         if (isWrongPasswordAlertEnabled && (failedAttempts >= maxWrongPasswordAttempts)) {
             // Device admin enabled
-            // Start the battery service with start intent
+            // Start the wrong password alert service with start intent
             Intent startIntent = new Intent(context, WrongPasswordAlertService.class);
             ContextCompat.startForegroundService(context, startIntent);
 
+            // Capture image/selfie with camera service
             Intent i = new Intent(context, CameraService.class);
             // TODO: read this from preference
             i.putExtra("useFrontCamera", true);

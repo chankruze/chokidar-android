@@ -97,7 +97,7 @@ public class CameraUtils {
             return;
         }
 
-        File file = new File(mContext.getExternalFilesDir(null), new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".jpg");
+        File file = new File(mContext.getExternalFilesDir(null), "INTRUDER_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".jpg");
 
         ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
 

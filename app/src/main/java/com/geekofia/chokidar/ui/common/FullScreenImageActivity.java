@@ -114,7 +114,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/jpeg");
         shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Hey, check out this person who tried to break into my phone!");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Hey, check out this person who tried to break into my phone. Image captured by " + getString(R.string.app_name) + " App!\n\nInstall now from the Google Play Store!\nhttps://play.google.com/store/apps/details?id=" + getPackageName());
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         try {
