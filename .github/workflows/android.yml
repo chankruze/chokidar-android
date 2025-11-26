@@ -98,9 +98,11 @@ jobs:
       - name: Generate Release Notes
         id: notes
         run: |
-          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
-          git log -10 --pretty=format:"- %s" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "release_notes<<EOF"
+            git log -10 --pretty=format:"- %s"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       # ----------------------------
       # Create GitHub Release (only when pushing a tag)
