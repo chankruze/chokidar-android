@@ -14,6 +14,15 @@ android {
         versionName = "1.5.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val versionProps = rootProject.file("version.properties")
+        if (versionProps.exists()) {
+            val props = java.util.Properties().apply { load(versionProps.inputStream()) }
+            defaultConfig {
+                versionName = props["VERSION_NAME"] as String
+                versionCode = (props["VERSION_CODE"] as String).toInt()
+            }
+        }
     }
 
     signingConfigs {
