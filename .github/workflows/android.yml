@@ -2,11 +2,10 @@ name: Android CI
 
 on:
   push:
-    tags:
-      - "v*.*.*" # for versioned releases (v1.2.3)
-  pull_request:
     branches: [ "main" ]
-  push:
+    tags:
+      - "v*.*.*"   # auto release on version tags like v1.2.3
+  pull_request:
     branches: [ "main" ]
 
 jobs:
@@ -16,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # needed for git tags + changelog
+          fetch-depth: 0   # needed for git logs + tags
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -26,16 +25,18 @@ jobs:
           cache: gradle
 
       # ----------------------------
-      # Auto-versioning using Git tag
+      # Auto-versioning (only for tag builds)
       # ----------------------------
       - name: Extract version name & code
         id: version
         run: |
-          # Git tag expected format: v1.2.3
-          TAG=${GITHUB_REF#refs/tags/}
-          VERSION_NAME=${TAG#v}
-          
-          # Version code = timestamp as integer
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG=${GITHUB_REF#refs/tags/}
+            VERSION_NAME=${TAG#v}
+          else
+            VERSION_NAME="0.0.0-dev"
+          fi
+
           VERSION_CODE=$(date +%s)
 
           echo "versionName=$VERSION_NAME" >> $GITHUB_OUTPUT
@@ -51,14 +52,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # ----------------------------
-      # Inject versionName + versionCode to Gradle
-      # ----------------------------
+      # Write version properties (used by build.gradle.kts)
       - name: Write version properties
         run: |
           echo "VERSION_NAME=${{ steps.version.outputs.versionName }}" > version.properties
           echo "VERSION_CODE=${{ steps.version.outputs.versionCode }}" >> version.properties
-      # Now Gradle can read versionName/versionCode from version.properties
 
       # ----------------------------
       # Build Debug APK
@@ -95,9 +93,9 @@ jobs:
           path: app/build/outputs/bundle/release/*.aab
 
       # ----------------------------
-      # Release Notes Generation
+      # Generate Release Notes
       # ----------------------------
-      - name: Generate Release Notes (Commit Log)
+      - name: Generate Release Notes
         id: notes
         run: |
           echo "release_notes<<EOF" >> $GITHUB_OUTPUT
@@ -105,7 +103,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       # ----------------------------
-      # Create GitHub Release (Only when pushing a version tag)
+      # Create GitHub Release (only when pushing a tag)
       # ----------------------------
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
