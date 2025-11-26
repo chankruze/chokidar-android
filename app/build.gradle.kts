@@ -32,10 +32,7 @@ android {
             isShrinkResources = false
         }
 
-        getByName("debug") {
-            // optional
-            signingConfig = signingConfigs.getByName("release")
-        }
+        getByName("debug") {}
     }
 
     compileOptions {
