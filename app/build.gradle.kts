@@ -19,10 +19,14 @@ android {
 
         val versionProps = rootProject.file("version.properties")
         if (versionProps.exists()) {
-            val props = java.util.Properties().apply { load(versionProps.inputStream()) }
-            defaultConfig {
-                versionName = props["VERSION_NAME"] as String
-                versionCode = (props["VERSION_CODE"] as String).toInt()
+            val props = Properties()
+            props.load(versionProps.inputStream())
+        
+            android {
+                defaultConfig {
+                    versionName = props.getProperty("VERSION_NAME")
+                    versionCode = props.getProperty("VERSION_CODE").toInt()
+                }
             }
         }
     }
